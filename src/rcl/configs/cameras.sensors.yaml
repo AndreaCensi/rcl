@@ -1,0 +1,10 @@
+# This file describes the available sensors
+- id: "cam_f${fov}_n${n}_gn${noise}"
+  desc: "A camera with ${n} sensels and ${fov} field of view"
+  code: 
+      - vehicles.library.sensors.PhotoreceptorsUniform
+      - num_sensels: "${n}"
+        fov_deg:     "${fov}"
+        noise: 
+            - vehicles.library.noises.AdditiveGaussian
+            - std_dev: "0.${noise}"

@@ -1,0 +1,5 @@
+rcl_demo_vehicles --vehicle d_SE2_rb_v-cam_f180_n16_gn00 -o rcl_demo2 --resolution=0.001 --length=1 --threshold=0.1 
+rcl_demo_plots -o rcl_demo2
+
+
+rcl_many_stats --vehicle d_SE2_rb_v-cam_f180_n16_gn00 -o rcl_demo3 --resolution=0.001 --length=1 --threshold=0.1 
