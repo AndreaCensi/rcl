@@ -1,8 +1,9 @@
 from . import logger, np
 from ..utils import wrap_script_entry_point
 from optparse import OptionParser
-from vehicles.configuration.master import VehiclesConfig
+from vehicles import VehiclesConfig
 from rcl.library.simulations import get_simulation_data
+
 
 def rcl_many_stats_main(args):
     parser = OptionParser(usage="")
@@ -10,6 +11,7 @@ def rcl_many_stats_main(args):
 
     parser.add_option("--vehicle", default='d_SE2_rb_v-cam_f180_n16_gn01',
                       help="ID vehicle [%default].")
+    
     parser.add_option("--world", default='stochastic_box_10',
                        help="ID world [%default].")
     

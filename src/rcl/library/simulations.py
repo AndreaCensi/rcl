@@ -2,7 +2,7 @@ from . import np, logger
 from rcl.library import SpikingSensor
 from vehicles import VehicleSimulation, VehiclesConfig
 import os
-from rcl.library.spiking import event_dtype
+from rcl.library import event_dtype
 
 def get_simulation_data(id_world, id_vehicle, command, dt, length, spike_threshold):
     """
@@ -32,7 +32,7 @@ def get_simulation_data(id_world, id_vehicle, command, dt, length, spike_thresho
     observations = []
     
     vsim = vehicle_simulation(id_world, id_vehicle, command, dt, length)
-    for data in spiking_vehicle_simulation(spike_threshold, vsim):
+    for vs, data in spiking_vehicle_simulation(spike_threshold, vsim):
         all_events.extend(data['events'])
         
         y = data['observations']
@@ -54,16 +54,14 @@ def get_simulation_data(id_world, id_vehicle, command, dt, length, spike_thresho
     observations = np.array(observations, dtype=obs.dtype)
     all_events = np.array(all_events, dtype=event_dtype)
     
-    print observations.size, observations.dtype
-    print all_events.size, all_events.dtype
-    
-    directions = vs.get_vehicle().sensors[0].directions
+    directions = vs.get_vehicle().sensors[0].sensor.directions
     log = {}
     log['observations'] = observations
     log['events'] = all_events
     log['directions'] = directions
     log['map'] = None  # XXX
     return log
+    
     
 def spiking_vehicle_simulation(threshold, vsim):
     """ Yields a sequence of dictionary with fields:
@@ -86,7 +84,7 @@ def spiking_vehicle_simulation(threshold, vsim):
         data['events'] = events
         data['pose'] = pose
         data['velocity'] = vel
-        yield data
+        yield vs, data
 
 
 def vehicle_simulation(id_world, id_vehicle, command, dt, length):

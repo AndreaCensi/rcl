@@ -1,6 +1,6 @@
 from . import np, contract
 
-__all__ = ['SpikingSensor']
+__all__ = ['SpikingSensor', 'event_dtype']
 
 
 event_dtype = np.dtype([('timestamp', 'float'),

@@ -1,0 +1,41 @@
+#!/usr/bin/env pg
+# Just make this executable
+--- model freqs
+config output = 'output.mp4'
+config title = "Dense probabilistic tracking of high-frequency LED markers"
+
+|mplayer file="f00500.mp4"| -> |image_label title="500 Hz"| -> rgb1
+|mplayer file="f00700.mp4"| -> |image_label title="700 Hz"| -> rgb2
+|mplayer file="f01000.mp4"| -> |image_label title="1000 Hz"| -> rgb3
+
+rgb1, rgb2, rgb3 -> |sync| -> |grid cols=3| ->  |image_label title=$title| -> rgb 
+
+rgb -> |b:border| --> |t:text| --> final
+b.bottom = 50
+t.texts = [{string: "Slowed down 5x (1 frame = 0.01s)", valign: bottom, halign: left, size: 30, color: gray, bg: black, font: 'Candara', position: [-5, 5]} ]
+
+final -> |mencoder file=$output|
+
+--- model image_label
+""" Puts a border and a label around an image """
+config title
+input rgb 
+output out "Image with border and label"
+config bgcolor = [0,0,0]
+config size = 40
+config font = 'Candara'
+config color = white
+config bg =   black
+
+|input name=rgb| --> |border| --> |text| --> |output name=out|
+
+border.left = 2
+border.right = 2
+border.top = 70
+border.bottom = 2
+border.color = $bgcolor
+
+text.texts = [{string:$title, valign: top, halign: center, font: $font, size: $size, color: $color, bg: $bg, position: [5, center]} ]
+
+
+

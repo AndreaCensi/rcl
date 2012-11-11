@@ -39,7 +39,11 @@ setup(name='RCL',
          'console_scripts': [
                 'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
                 'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
-                'rcl_many_stats = rcl.programs.rcl_many_stats:main'
+                'rcl_frequency = rcl.programs.rcl_frequency:main',
+                'rcl_frequency_one = rcl.programs.rcl_frequency_one:main',
+                'rcl_many_stats = rcl.programs.rcl_many_stats:main',
+                'rcl_filter = rcl.programs.rcl_filter:main'
+                
            # 'vehicles_print_config = '
            #      'vehicles.programs.print_config:main',
            # 'vehicles_display_demo_simulations = '
