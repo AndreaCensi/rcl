@@ -1,21 +1,7 @@
-from . import np
+from . import np, logger
 from StringIO import StringIO
-
-
-class TextEventLogReader(object):
-    
-    def __init__(self, filename):
-        self.filename = filename
-    
-
-raw_event_dtype = [('timestamp', 'float'), ('x', 'int'),
-                   ('y', 'int'), ('sign', 'int')]
-
-filtered_event_dtype = [('timestamp', 'float'),
-                        ('timestamp_prev', 'float'),
-                         ('x', 'int'), ('y', 'int'), ('sign', 'int'),
-                    ('delta', 'float'), ('frequency', 'float'),
-                    ('valid', 'bool'), ('same', 'bool'), ('sign_prev', 'int')]
+from rcl.library.aerlog.types import (aer_raw_event_dtype,
+    aer_filtered_event_dtype)
 
 
 def aer_raw_sequence(line_stream):
@@ -24,7 +10,13 @@ def aer_raw_sequence(line_stream):
      """
     for line in line_stream:
         io = StringIO(line)  # XXX inefficient
-        a = np.genfromtxt(io, dtype=raw_event_dtype)        
+        try:
+            a = np.genfromtxt(io, dtype=aer_raw_event_dtype)
+        except ValueError as e:
+            msg = 'Could not read line %r: %s' % (line, e)
+            logger.error(msg)
+            raise
+                
         a['timestamp'] = a['timestamp'] * 0.001 * 0.001
         if a['sign'] == 0:
             a['sign'] = -1
@@ -53,7 +45,7 @@ def aer_filtered_cutoff(aer_filtered_seq, min_frequency, max_frequency):
 class AER_Filter(object):
     def __init__(self, shape=(128, 128)):
         self.shape = shape
-        self.last_event = np.zeros(shape, dtype=raw_event_dtype)
+        self.last_event = np.zeros(shape, dtype=aer_raw_event_dtype)
         self.last_event['timestamp'] = 0
         
     def filter(self, raw_event_sequence):
@@ -74,7 +66,7 @@ class AER_Filter(object):
             else:
                 
                 # filtered event 
-                fe = np.zeros((), dtype=filtered_event_dtype)
+                fe = np.zeros((), dtype=aer_filtered_event_dtype)
                 fe['timestamp'] = e['timestamp']
                 fe['timestamp_prev'] = le['timestamp']
                 fe['x'] = e['x']

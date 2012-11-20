@@ -1,82 +1,74 @@
 from . import logger, np
-from ..utils import wrap_script_entry_point
-from optparse import OptionParser
-from vehicles import VehiclesConfig
+from compmake_apps import CompmakeApp
 from rcl.library.simulations import get_simulation_data
+from vehicles import VehiclesConfig
 
 
-def rcl_many_stats_main(args):
-    parser = OptionParser(usage="")
-    parser.disable_interspersed_args()
-
-    parser.add_option("--vehicle", default='d_SE2_rb_v-cam_f180_n16_gn01',
-                      help="ID vehicle [%default].")
+class RCLStatsApp(CompmakeApp):
     
-    parser.add_option("--world", default='stochastic_box_10',
-                       help="ID world [%default].")
+    def define_options(self, params):
+        params.add_string("vehicle", default='d_SE2_rb_v-cam_f180_n16_gn01',
+                          help="ID vehicle.")
+        params.add_string("world", default='stochastic_box_10', help="ID world")
+        params.add_float_list("resolution", default=[0.01])
+        params.add_float_list("length", default=[1.0])
+        params.add_float_list("threshold", default=[0.05])
+        params.add_int("nsims", default=2)
+        params.add_int("seed", default=None)
+        
+    def define_jobs(self, options, rm):
+        id_vehicle = options.vehicle
+        id_world = options.world
     
-    parser.add_option("--outdir", "-o", default='rcl_demo_vehicles',
-                    help="output directory [%default]")
-
-    parser.add_option("--resolution", default=0.01, type='float')
-    parser.add_option("--length", default=1.0, type='float')
-    parser.add_option("--threshold", default=0.05, type='float')
+        logger.info('id_vehicle: %s' % id_vehicle)
+        logger.info('  id_world: %s' % id_world)
     
-    parser.add_option("--nsims", default=2, type='int')
-
-    parser.add_option("--seed", default=None, type='int')
+        if options.seed is None:
+            options.seed = np.random.randint(1000000)
     
-    (options, args) = parser.parse_args(args)
+        np.random.seed(seed=options.seed)
+        logger.info('Using seed %s (your lucky number is %s)' % 
+                    (options.seed, np.random.randint(1000)))
     
-    if args:
-        raise Exception()
     
-    id_vehicle = options.vehicle
-    id_world = options.world
-
-    logger.info('id_vehicle: %s' % id_vehicle)
-    logger.info('  id_world: %s' % id_world)
-
-    if options.seed is None:
-        options.seed = np.random.randint(1000000)
-
-    np.random.seed(seed=options.seed)
-    logger.info('Using seed %s (your lucky number is %s)' % 
-                (options.seed, np.random.randint(1000)))
-
-
-    VehiclesConfig.load()
+        VehiclesConfig.load()
+        
+        def get_default_dir():
+            from pkg_resources import resource_filename  # @UnresolvedImport
+            directory = resource_filename("rcl", "configs")
+            return directory
+        
+        VehiclesConfig.load(get_default_dir())
     
-    def get_default_dir():
-        from pkg_resources import resource_filename  # @UnresolvedImport
-        directory = resource_filename("rcl", "configs")
-        return directory
+        simconf = dict(id_world=id_world,
+                       id_vehicle=id_vehicle,
+                       command=command,
+                       dt=self.choice(options.resolution),
+                       length=self.choice(options.length),
+                       spike_threshold=self.choice(options.threshold),
+                       iteration=self.choice(range(options.nsims)))
     
-    VehiclesConfig.load(get_default_dir())
+        jobs = self.comp_comb(run_simulation, **simconf)
+            
+#        for param2, samples in jobs.groups_by_field_value('param2'):
+#            rj = comp(report, param2, samples)
+#            rm.add(rj, 'report', param2=param2)
+
+
+
+def command(t):
+    return np.array([1, 0, 0])
     
-    command = lambda _: np.array([1, 0, 0])
-    
-
-    dt = options.resolution
-    length = options.length
-    threshold = options.threshold
-    nsims = options.nsims
-
-    simconf = dict(id_world=id_world,
-                   id_vehicle=id_vehicle,
-                   command=command,
-                   dt=dt, length=length, spike_threshold=threshold)
-
-    simulations = jobs_many_stats(nsims, simconf)
-
-
-def jobs_many_stats(nsims, simconf):
-    simulations = []
-    for _ in range(nsims):
-        simdata = get_simulation_data(**simconf)
-        simulations.append(simdata)
-    return simulations
-    
+def run_simulation(iteration, **simconf):
+    return get_simulation_data(**simconf)
+#    
+# def jobs_many_stats(nsims, simconf):
+#    simulations = []
+#    for _ in range(nsims):
+#        simulations.append(simdata)
+#    return simulations
+#    
 
 def main():
-    wrap_script_entry_point(rcl_many_stats_main, logger)
+    RCLStatsApp().main()
+    

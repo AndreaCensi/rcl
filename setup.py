@@ -37,12 +37,15 @@ setup(name='RCL',
       tests_require=['nose>=1.1.2,<2'],
       entry_points={
          'console_scripts': [
+                'aer_read_log = rcl.library.aerlog.load_aer_logs:main',
+                'aer_simple_stats = rcl.programs.aer_simple_stats:main',
                 'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
                 'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
                 'rcl_frequency = rcl.programs.rcl_frequency:main',
                 'rcl_frequency_one = rcl.programs.rcl_frequency_one:main',
                 'rcl_many_stats = rcl.programs.rcl_many_stats:main',
-                'rcl_filter = rcl.programs.rcl_filter:main'
+                'rcl_filter = rcl.programs.rcl_filter:main',
+                'rcl_filter_phase = rcl.programs.rcl_filter_phase:main'
                 
            # 'vehicles_print_config = '
            #      'vehicles.programs.print_config:main',

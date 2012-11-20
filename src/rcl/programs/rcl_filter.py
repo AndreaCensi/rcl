@@ -4,8 +4,6 @@ from optparse import OptionParser
 from rcl.library.event_text_log_reader import (aer_raw_sequence,
     AER_Filter, aer_raw_relative_timestamp, aer_raw_only_minus,
     aer_filtered_cutoff)
-from rcl.programs.rcl_frequency import load_data, compute_deltas
-from reprep import Report
 import os
 from reprep.graphics.filter_scale import scale
 from procgraph_pil.imwrite import imwrite
