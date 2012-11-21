@@ -1,0 +1,23 @@
+--- model aer_image_label1
+""" Puts a border and a label around an image """
+config title
+input rgb 
+output out "Image with border and label"
+config bgcolor = [0,0,0]
+config size = 40
+config font = 'Candara'
+config color = white
+config bg =   black
+
+|input name=rgb| --> |border| --> |text| --> |output name=out|
+
+border.left = 2
+border.right = 2
+border.top = 70
+border.bottom = 2
+border.color = $bgcolor
+
+text.texts = [{string:$title, valign: top, halign: center, font: $font, size: $size, color: $color, bg: $bg, position: [5, center]} ]
+
+
+

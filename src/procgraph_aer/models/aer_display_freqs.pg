@@ -1,0 +1,17 @@
+#!/usr/bin/env pg
+# Just make this executable
+--- model freqs
+config output = 'output.mp4'
+config title = "Dense probabilistic tracking of high-frequency LED markers"
+
+|mplayer file="f00500.mp4"| -> |aer_image_label1 title="500 Hz"| -> rgb1
+|mplayer file="f00700.mp4"| -> |aer_image_label1 title="700 Hz"| -> rgb2
+|mplayer file="f01000.mp4"| -> |aer_image_label1 title="1000 Hz"| -> rgb3
+
+rgb1, rgb2, rgb3 -> |sync| -> |grid cols=3| ->  |aer_image_label1 title=$title| -> rgb 
+
+rgb -> |b:border| --> |t:text| --> final
+b.bottom = 50
+t.texts = [{string: "Slowed down 5x (1 frame = 0.01s)", valign: bottom, halign: left, size: 30, color: gray, bg: black, font: 'Candara', position: [-5, 5]} ]
+
+final -> |mencoder file=$output|

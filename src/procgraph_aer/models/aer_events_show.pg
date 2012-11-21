@@ -1,0 +1,39 @@
+#!/usr/bin/env pg
+--- model aer_events_show
+""" Displays several statistics of events streams """
+config filename
+config out
+config interval = 0.001 
+
+import procgraph_aer
+
+|aer_raw_stream filename=$filename| -> |aer_transpose| -> events
+
+
+events -> |time_slice interval=$interval| -> |list2array| -> last_events
+
+last_events -> |aer_events_hist| -> hist_all
+last_events -> |aer_filter_pos| -> |aer_events_hist| -> hist_pos
+last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
+#last_events -> |aer_events_hist_sign| -> hist_sign
+
+hist_all -> |scale| -> |resize width=256| -> \
+	|aer_image_label2 title ='all events'| -> rgb_all
+hist_pos -> |scale max_color=[1,0,0]| -> |resize width=256| -> \
+	|aer_image_label2 title='positive'| -> rgb_pos
+hist_neg -> |scale max_color=[0,0,1]| -> |resize width=256| -> \
+	|aer_image_label2 title='negative'| -> rgb_neg
+# hist_sign -> |posneg skim=1| -> |resize width=256| -> \
+#	|aer_image_label2 title='both'| -> rgb_sign
+
+rgb_all, rgb_pos, rgb_neg  -> |sync| -> |grid cols=3| -> rgb
+
+
+rgb -> |info|
+
+rgb -> |mencoder file=$out|
+
+
+
+""" Temporary display """
+rgb -> |imwrite file="aer_events_show.png"|
