@@ -1,13 +1,14 @@
 from . import logger, np
 from ..utils import wrap_script_entry_point
 from optparse import OptionParser
-from rcl.library.event_text_log_reader import (aer_raw_sequence,
-    AER_Filter, aer_raw_relative_timestamp, aer_raw_only_minus,
-    aer_filtered_cutoff)
-import os
-from reprep.graphics.filter_scale import scale
 from procgraph_pil.imwrite import imwrite
+from rcl.library import (AER_Filter, aer_raw_relative_timestamp,
+    aer_raw_only_minus, aer_filtered_cutoff)
+from rcl.library.aerlog import load_aer_generic
+from reprep.graphics.filter_scale import scale
 from reprep.graphics.zoom import rgb_zoom
+import os
+
 
 class TrackerFixedFreq():
     def __init__(self, freq, sigma, shape=(128, 128)):
@@ -40,6 +41,8 @@ class TrackerFixedFreq():
                 logger.info('Motion') 
                 self.p *= 0.95
                 self.last_motion = t
+                
+                
 
 def rcl_filter_main(args):
     parser = OptionParser(usage="")
@@ -64,8 +67,7 @@ def rcl_filter_main(args):
         if not os.path.exists(options.outdir):
             os.makedirs(options.outdir)
        
-    line_stream = open(options.filename)
-    raw_sequence = aer_raw_sequence(line_stream)
+    raw_sequence = load_aer_generic(options.filename)
     raw_sequence = aer_raw_only_minus(raw_sequence)
     raw_sequence = aer_raw_relative_timestamp(raw_sequence)
     aer_filter = AER_Filter()
@@ -90,7 +92,6 @@ def rcl_filter_main(args):
         logger.debug('print to %r' % filename)
     
     last_write = None 
-    
     
     for e in cutoff:
         tf.integrate(e)

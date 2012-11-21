@@ -1,12 +1,12 @@
-from rcl.library.event_text_log_reader import (aer_raw_sequence,
+from rcl.library import (
     aer_raw_only_minus, aer_raw_relative_timestamp, AER_Filter, aer_filtered_cutoff)
 from reprep import Report
 import numpy as np
 from quickapp import QuickApp
+from rcl.library.aerlog.generic import load_aer_generic
 
 def get_event_stream(filename, f_min, f_max):
-    line_stream = open(filename)
-    raw_sequence = aer_raw_sequence(line_stream)
+    raw_sequence = load_aer_generic(filename)
     raw_sequence = aer_raw_only_minus(raw_sequence)
     raw_sequence = aer_raw_relative_timestamp(raw_sequence)
     aer_filter = AER_Filter()

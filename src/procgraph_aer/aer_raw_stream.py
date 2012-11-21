@@ -1,9 +1,9 @@
-from conf_tools import BadConfig
-from procgraph import Block
-import os
+from procgraph import Block, BadConfig
 from procgraph.block_utils import IteratorGenerator
-from rcl.library.aerlog.load_aer_logs import aer_raw_events_from_file
-from rcl.library.event_text_log_reader import aer_raw_sequence
+from rcl.library.filters import aer_raw_relative_timestamp
+import os
+from rcl.library.aerlog import load_aer_generic
+
 
 class AERRawStream(IteratorGenerator):
     ''' 
@@ -20,11 +20,9 @@ class AERRawStream(IteratorGenerator):
             raise BadConfig(self, 'Not existent file %r.' % filename,
                             'filename')
     
-        if '.aer.txt' in filename:
-            raw_events = aer_raw_sequence(open(filename))
-        else:
-            raw_events = aer_raw_events_from_file(filename)
+        raw_events = load_aer_generic(filename)
     
-        for e in raw_events:
-            yield 'events', e['timestamp'], e
+        events2 = aer_raw_relative_timestamp(raw_events)
+        for e in events2:
+            yield 0, e['timestamp'], e
     

@@ -39,6 +39,7 @@ setup(name='RCL',
          'console_scripts': [
                 'aer_read_log = rcl.library.aerlog.load_aer_logs:main',
                 'aer_simple_stats = rcl.programs.aer_simple_stats:main',
+                'rcl_detect = rcl.programs.detect:rcl_detect_main',
                 'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
                 'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
                 'rcl_frequency = rcl.programs.rcl_frequency:main',
