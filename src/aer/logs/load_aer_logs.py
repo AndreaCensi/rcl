@@ -1,9 +1,9 @@
-import sys
+from .. import aer_raw_event_dtype
 from io import BufferedReader
 import io
-
 import numpy as np
-from rcl.library.aerlog.types import aer_raw_event_dtype
+import sys
+
 
 def aer_raw_events_from_file(filename):
     """ 
@@ -40,18 +40,9 @@ def aer_load_from_file(filename):
         x, y, s = address2xys(address)
 
         ts_str = f.read(4)
-         
-#        ts1 = ord(ts_str[0])
-#        ts2 = ord(ts_str[1])
-#        ts3 = ord(ts_str[2])
-#        ts4 = ord(ts_str[3])
-#        ts_ = ts1 * 256 * 256 * 256 + ts2 * 256 * 256 + ts3 * 256 + ts4
-         
+          
         ts = np.fromstring(ts_str, dtype=np.int32).newbyteorder('>')
-#        ts_mus = ts[0] * 0.001 * 0.001 
-        
-#        print ts_, ts_mus
-#        print ('%3d %3d %3d %3d' % (ts1, ts2, ts3, ts4))
+
         yield ts[0], x, y, s
 
 def address2xys(address):

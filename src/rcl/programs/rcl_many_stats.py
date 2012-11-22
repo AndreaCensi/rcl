@@ -1,10 +1,10 @@
 from . import logger, np
-from compmake_apps import CompmakeApp
+from quickapp import QuickApp
 from rcl.library.simulations import get_simulation_data
 from vehicles import VehiclesConfig
 
 
-class RCLStatsApp(CompmakeApp):
+class RCLStatsApp(QuickApp):
     
     def define_options(self, params):
         params.add_string("vehicle", default='d_SE2_rb_v-cam_f180_n16_gn01',
@@ -61,13 +61,6 @@ def command(t):
     
 def run_simulation(iteration, **simconf):
     return get_simulation_data(**simconf)
-#    
-# def jobs_many_stats(nsims, simconf):
-#    simulations = []
-#    for _ in range(nsims):
-#        simulations.append(simdata)
-#    return simulations
-#    
 
 def main():
     RCLStatsApp().main()

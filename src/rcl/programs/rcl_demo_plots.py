@@ -1,5 +1,5 @@
 from . import logger, np
-from ..utils import wrap_script_entry_point
+from aer.utils import wrap_script_entry_point
 from optparse import OptionParser
 import os
 from reprep import Report

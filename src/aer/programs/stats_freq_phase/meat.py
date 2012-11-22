@@ -1,22 +1,28 @@
-from rcl.library import (
-    aer_raw_only_minus, aer_raw_relative_timestamp, AER_Filter, aer_filtered_cutoff)
+from quickapp import QuickApp
 from reprep import Report
 import numpy as np
-from quickapp import QuickApp
-from rcl.library.aerlog.generic import load_aer_generic
+from aer.filters import aer_filtered_cutoff
 
-def get_event_stream(filename, f_min, f_max):
-    raw_sequence = load_aer_generic(filename)
-    raw_sequence = aer_raw_only_minus(raw_sequence)
-    raw_sequence = aer_raw_relative_timestamp(raw_sequence)
-    aer_filter = AER_Filter()
-    filtered = aer_filter.filter(raw_sequence)
-    cutoff = aer_filtered_cutoff(filtered, f_min, f_max)
-    return cutoff
-    
+import sys
+from aer.filters import aer_pipeline_transitions1
+from aer.logs.generic import aer_load_log_generic
+#
+# def get_event_stream(filename, f_min, f_max):
+#    raw_sequence = aer_load_log_generic(filename)
+#    raw_sequence = aer_raw_only_minus(raw_sequence)
+#    raw_sequence = aer_raw_relative_timestamp(raw_sequence)
+#    aer_filter = AER_Filter()
+#    filtered = aer_filter.filter(raw_sequence)
+#    cutoff = aer_filtered_cutoff(filtered, f_min, f_max)
+#    return cutoff
+#    
 
 def filter_phase(log, f_min, f_max, fd, pd, n_stop=0):
-    stream = get_event_stream(log, f_min, f_max)
+    raw_sequence = aer_load_log_generic(log)
+    transitions = aer_pipeline_transitions1(raw_sequence, sign=(+1))
+#
+#    stream = get_event_stream(log, f_min, f_max)
+    stream = aer_filtered_cutoff(transitions, f_min, f_max)
     
     P = np.zeros((fd, pd))
     frequencies = np.linspace(f_min, f_max, fd)
@@ -37,7 +43,6 @@ def filter_phase(log, f_min, f_max, fd, pd, n_stop=0):
         if n_stop != 0 and count >= n_stop:
             break
             
-    # returns statistics
     stats = {}
     stats['P'] = P
     return stats
@@ -75,6 +80,6 @@ class RCLFilterPhaseApp(QuickApp):
         
         self.add_report(report, 'rep1')
  
-def main():
-    RCLFilterPhaseApp().main()
+def aer_stats_freq_phase_main():
+    sys.exit(RCLFilterPhaseApp().main())
     

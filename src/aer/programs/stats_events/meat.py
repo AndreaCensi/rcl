@@ -1,30 +1,12 @@
 from . import logger, np
-from ..utils import wrap_script_entry_point
-from optparse import OptionParser
-import os
 from reprep import Report
-from rcl.programs.rcl_frequency import load_data, compute_deltas
+from aer.programs.stats_freq.meat import load_data  # XXX
+from aer.programs.stats_freq.meat import compute_deltas  # XXX
 
 
-def rcl_frequency_one_main(args):
-    parser = OptionParser(usage="")
-    parser.disable_interspersed_args()
-
-    
-    parser.add_option("--filename")
-    
-    parser.add_option("--outdir", "-o", help="output directory [%default]")
-    
-    
-    (options, args) = parser.parse_args()
-    if args:
-        raise Exception()
-    
-    if options.outdir is None:
-        options.outdir = os.path.splitext(options.filename)[0] + '_report'
-        
-    logger.info('Loading data from %r' % options.filename)
-    data = load_data(options.filename)
+def aer_stats_events_meat(log):
+    logger.info('Loading data from %r' % log)
+    data = load_data(log)
     logger.info('Found %s samples' % data.size)
     ignore_same = False
     fdata = compute_deltas(data, ignore_same=ignore_same, ignore_plus=True)
@@ -32,11 +14,9 @@ def rcl_frequency_one_main(args):
     logger.info('percentage same: %s ' % np.mean(fdata['same']))
     logger.info('filtered')
     
-    
     T = data['timestamp'][-1] - data['timestamp'][0]
     logger.info('Delta: %s' % T)
     logger.info('Plotting...')
-    
     
     r = Report('index')
     
@@ -46,7 +26,7 @@ def rcl_frequency_one_main(args):
     y = data['y']
      
     bins = (range(np.max(x)), range(np.max(y)))
-    h, xedges, yedges = np.histogram2d(x, y, bins=bins)
+    h, _, _ = np.histogram2d(x, y, bins=bins)
     
     a, b = np.where(h == np.max(h))
     im = a[0]
@@ -98,10 +78,5 @@ def rcl_frequency_one_main(args):
         delta = 0.01
         pylab.axis((t0, t0 + delta, -0.2, 1.2)) 
     
-    rf = os.path.join(options.outdir, 'report_one.html')
-    logger.info('Writing to %r' % rf)
-    r.to_html(rf)
-    
-    
-def main():
-    wrap_script_entry_point(rcl_frequency_one_main, logger)
+    return r
+

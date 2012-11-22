@@ -1,9 +1,7 @@
+from aer import aer_load_log_generic, aer_raw_relative_timestamp
 from procgraph import Block, BadConfig
 from procgraph.block_utils import IteratorGenerator
-from rcl.library.filters import aer_raw_relative_timestamp
 import os
-from rcl.library.aerlog import load_aer_generic
-
 
 class AERRawStream(IteratorGenerator):
     ''' 
@@ -20,7 +18,7 @@ class AERRawStream(IteratorGenerator):
             raise BadConfig(self, 'Not existent file %r.' % filename,
                             'filename')
     
-        raw_events = load_aer_generic(filename)
+        raw_events = aer_load_log_generic(filename)
     
         events2 = aer_raw_relative_timestamp(raw_events)
         for e in events2:

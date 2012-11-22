@@ -1,9 +1,7 @@
 from . import logger, np
-from ..utils import wrap_script_entry_point
+from aer.utils import wrap_script_entry_point
 from optparse import OptionParser
-from vehicles.simulation.vsimulation import VehicleSimulation
 from vehicles.configuration.master import VehiclesConfig
-import os
 from rcl.library.spiking import SpikingSensor
 from rcl.library.simulations import write_logs, vehicle_simulation
 

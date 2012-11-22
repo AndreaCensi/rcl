@@ -1,6 +1,5 @@
-from . import np, logger
+from . import aer_raw_event_dtype, np, logger
 from StringIO import StringIO
-from  . import (aer_raw_event_dtype)
 
 
 def aer_raw_sequence(line_stream):

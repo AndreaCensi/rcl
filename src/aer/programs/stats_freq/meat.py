@@ -1,48 +1,22 @@
 from . import logger, np
-from ..utils import wrap_script_entry_point
-from optparse import OptionParser
-import os
 from reprep import Report
+from aer.filters.pipelines import aer_pipeline_transitions1_all
 
 
-def rcl_frequency_main(args):
-    parser = OptionParser(usage="")
-    parser.disable_interspersed_args()
+def aer_stats_freq_meat(log):
+    fdata = aer_pipeline_transitions1_all(log, sign=(+1))
+    x, y = fdata['x'], fdata['y']
 
-    parser.add_option("--filename")
-    
-    parser.add_option("--outdir", "-o", help="output directory [%default]")
-    
-    (options, args) = parser.parse_args()
-    if args:
-        raise Exception()
-    
-    if options.outdir is None:
-        options.outdir = os.path.splitext(options.filename)[0] + '_report'
-        
-    logger.info('Loading data from %r' % options.filename)
-    data = load_data(options.filename)
-    logger.info('Found %s samples' % data.size)
-    fdata = compute_deltas(data, ignore_same=False, ignore_plus=True)
-    logger.info('Found %s valid deltas' % fdata.size)
     logger.info('percentage same: %s ' % np.mean(fdata['same']))
     logger.info('filtered')
     
-    
-    T = data['timestamp'][-1] - data['timestamp'][0]
-    logger.info('Delta: %s' % T)
     logger.info('Plotting...')
-    
     
     r = Report('index')
     
     f = r.figure(cols=3)
     
-    x = data['x']
-    y = data['y']
-    print np.max(x), np.max(y)
-    
-    bins = (range(np.max(x)), range(np.max(y)))
+    bins = (range(128), range(128))
     
     
     min_f = 20.0
@@ -59,9 +33,7 @@ def rcl_frequency_main(args):
     frequency = frequency[valid]
     delta_s = delta_s[valid]
     
-#    frequency = np.clip(frequency, min_f, max_f)
-#    delta_s = np.clip(delta_s, min_d, max_d) 
-#    
+
     def show_heat(pylab, select=None):
         if select is None:
             xs, ys = x, y
@@ -70,7 +42,7 @@ def rcl_frequency_main(args):
             ys = y[select]
             
         if xs.size:
-            h, xedges, yedges = np.histogram2d(xs, ys, bins=bins)
+            h, _, _ = np.histogram2d(xs, ys, bins=bins)
         else:
             h = np.zeros((128, 128))
         pylab.imshow(h)
@@ -101,11 +73,9 @@ def rcl_frequency_main(args):
         select = np.logical_not(fdata['same'])
         show_heat(pylab, select)
         pylab.colorbar()
+        
+    return r
          
-    rf = os.path.join(options.outdir, 'report.html')
-    logger.info('Writing to %r' % rf)
-    r.to_html(rf)
-    
     
 def compute_deltas(data, ignore_same=True, ignore_plus=False):
     n = data.size
@@ -168,6 +138,3 @@ def load_data(filename):
     dtype = [('timestamp', 'int'), ('x', 'int'), ('y', 'int'), ('sign', 'int')]
     return np.loadtxt(filename, dtype)
 
-
-def main():
-    wrap_script_entry_point(rcl_frequency_main, logger)

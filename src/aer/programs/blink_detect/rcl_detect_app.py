@@ -3,7 +3,7 @@ from quickapp import QuickApp
 import sys
  
 
-class RCLDetect(QuickApp):
+class AERBlinkDetect(QuickApp):
     def define_options(self, params):
         params.add_string("log", help='source file', compulsory=True)    
         params.add_int_list("frequencies", default=[500, 700, 1000],
@@ -17,7 +17,7 @@ class RCLDetect(QuickApp):
         self.comp(rcl_detect, options.log, options.frequencies, options.sigma, outdir)
 
  
-def rcl_detect_main():
-    sys.exit(RCLDetect().main())
+def aer_blink_detect_main():
+    sys.exit(AERBlinkDetect().main())
 
     

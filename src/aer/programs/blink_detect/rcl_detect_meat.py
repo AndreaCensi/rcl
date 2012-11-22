@@ -1,25 +1,23 @@
 from . import TrackerFixedFreq, logger
+from aer import aer_load_log_generic
+from aer.utils import md_argmax
+from aer_led_tracker import AERTrackLogWriter
 from contracts import contract
-from procgraph_pil.imwrite import imwrite
-from rcl.library.aerlog import load_aer_generic
-from rcl.library.filters import (aer_raw_relative_timestamp, AER_Filter,
-    AER_Transitions_Filter)
-from rcl.utils import md_argmax, construct_matrix
+from procgraph_pil.imwrite import imwrite  # XXX
 from reprep import rgb_zoom, scale
 from scipy.ndimage import gaussian_filter
-import os
 import itertools
-from aer_led_tracker.logio import AERTrackLogWriter
+import numpy as np
+import os
+from aer.filters import aer_pipeline_transitions1
 
 
 def rcl_detect(log, frequencies, sigma, outdir, detect_smooth_sigma=1.0,
                detect_neighbors=10, write_png=False):
-    raw_sequence = load_aer_generic(log)
-    raw_sequence = aer_raw_relative_timestamp(raw_sequence)
-    filtered = AER_Filter().filter(raw_sequence)
-    transitions = AER_Transitions_Filter(sign=(+1)).get_transitions(filtered)
+    raw_sequence = aer_load_log_generic(log)
+    transitions = aer_pipeline_transitions1(raw_sequence)
+    
     trackers = [TrackerFixedFreq(f, sigma) for f in frequencies]
-
 
     tracks_filename = os.path.join(outdir, 'all.tracks.txt')
     tracklog = AERTrackLogWriter(tracks_filename)
@@ -43,31 +41,6 @@ def rcl_detect(log, frequencies, sigma, outdir, detect_smooth_sigma=1.0,
             res = tracker.integrate(f)
             if res is not None:
                 handle_tracker_res(tracker, res, f['timestamp'])
-
-
-Mi = construct_matrix((128, 128), lambda i, _: i)
-Mj = construct_matrix((128, 128), lambda _, j: j)
-
-import numpy as np
-
-
-@contract(accum='array[HxW]', center='seq[2](int)', neighbors='int,>1')
-def centroid_estimate(accum, center, neighbors):
-    """ Returns S, mi, mj """
-    accum = accum.copy()
-    i, j = center[0], center[1]
-    # Set as 0
-    mask = np.zeros((128, 128), dtype=bool)
-    mask.fill(True)
-    mask[max(0, i - neighbors):min(127, i + neighbors),
-          max(0, j - neighbors):min(127, j + neighbors)] = False
-    accum[mask] = 0  
-    # compute mean coordinate
-    S = accum.sum()
-    mi = (accum * Mi).sum() / S
-    mj = (accum * Mj).sum() / S
-    return accum, S, mi, mj
-
 
 @contract(accum='array[HxW]', center='seq[2](int)', neighbors='int,>1')
 def centroid_estimate2(accum, center, neighbors):
@@ -136,3 +109,28 @@ def rcl_detect_write_png(tracker, detection, timestamp, outdir):
         
          
     
+
+#
+#
+# Mi = construct_matrix((128, 128), lambda i, _: i)
+# Mj = construct_matrix((128, 128), lambda _, j: j)
+#
+#
+#
+# @contract(accum='array[HxW]', center='seq[2](int)', neighbors='int,>1')
+# def centroid_estimate(accum, center, neighbors):
+#    """ Returns S, mi, mj """
+#    accum = accum.copy()
+#    i, j = center[0], center[1]
+#    # Set as 0
+#    mask = np.zeros((128, 128), dtype=bool)
+#    mask.fill(True)
+#    mask[max(0, i - neighbors):min(127, i + neighbors),
+#          max(0, j - neighbors):min(127, j + neighbors)] = False
+#    accum[mask] = 0  
+#    # compute mean coordinate
+#    S = accum.sum()
+#    mi = (accum * Mi).sum() / S
+#    mj = (accum * Mj).sum() / S
+#    return accum, S, mi, mj
+

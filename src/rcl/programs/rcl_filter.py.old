@@ -5,8 +5,7 @@ from procgraph_pil.imwrite import imwrite
 from rcl.library import (AER_Filter, aer_raw_relative_timestamp,
     aer_raw_only_minus, aer_filtered_cutoff)
 from rcl.library.aerlog import load_aer_generic
-from reprep.graphics.filter_scale import scale
-from reprep.graphics.zoom import rgb_zoom
+from reprep import rgb_zoom, scale
 import os
 
 
