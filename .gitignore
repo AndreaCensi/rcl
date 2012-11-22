@@ -3,3 +3,7 @@
 *.tt
 *.pgc
 out-*
+compmake_storage
+.noseids
+.compmake_history.txt
+aer_events_show.png

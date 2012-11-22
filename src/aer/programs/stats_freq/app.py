@@ -9,7 +9,7 @@ class AERStatsFreqApp(QuickApp):
                             
     def define_jobs(self):
         options = self.get_options()
-        report = self.comp(aer_stats_freq_meat, options.log)        
+        report = self.comp(aer_stats_freq_meat, options.log, sign=(-1))        
         self.add_report(report, 'rep1')
  
 

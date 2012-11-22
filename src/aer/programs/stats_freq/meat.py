@@ -1,10 +1,10 @@
 from . import logger, np
 from reprep import Report
-from aer.filters.pipelines import aer_pipeline_transitions1_all
+from aer.filters import aer_pipeline_transitions1_all
 
 
-def aer_stats_freq_meat(log):
-    fdata = aer_pipeline_transitions1_all(log, sign=(+1))
+def aer_stats_freq_meat(log, sign):
+    fdata = aer_pipeline_transitions1_all(log, sign=sign)
     x, y = fdata['x'], fdata['y']
 
     logger.info('percentage same: %s ' % np.mean(fdata['same']))
@@ -77,64 +77,63 @@ def aer_stats_freq_meat(log):
     return r
          
     
-def compute_deltas(data, ignore_same=True, ignore_plus=False):
-    n = data.size
-    dtype = [('timestamp', 'int'), ('x', 'int'), ('y', 'int'), ('sign', 'int'),
-             ('delta', 'float'), ('frequency', 'float'),
-              ('valid', 'bool'), ('same', 'bool')]
-    # copy fields we know
-    fdata = np.zeros(n, dtype=dtype)
-    fdata['x'][:] = data['x']
-    fdata['y'][:] = data['y']
-    fdata['timestamp'][:] = data['timestamp']
-    fdata['sign'][:] = data['sign']
-    
-    x = data['x']
-    y = data['y']
-    timestamp = data['timestamp']
-    # remember last event
-    last = np.zeros((128, 128), 'int')
-    last_sign = np.zeros((128, 128), 'int')
-    last.fill(timestamp[0])
-    delta = fdata['delta']
-    frequency = fdata['frequency']
-    valid = fdata['valid']
-    sign = data['sign']
-    same = fdata['same']
-    
-    for i in xrange(n):
-        t = timestamp[i]
-        
-        if ignore_plus and sign[i] == 1:
-            valid[i] = False
-            continue
-        
-        l = last[x[i], y[i]]
-        delta[i] = (t - l) * 0.000001
-        frequency[i] = 1.0 / delta[i]
-        
-        is_same = sign[i] == last_sign[x[i], y[i]]
-        if is_same and ignore_same:
-            valid[i] = False
-            continue
-        else:
-            pass 
-
-        last[x[i], y[i]] = t        
-        
-        valid[i] = delta[i] > 0
-        same[i] = is_same
-        last_sign[x[i], y[i]] = sign[i]
-        
-    use = fdata['valid']  
-    res = fdata[use]
-    
-    assert np.all(res['delta'] > 0)
-
-    return res
-
-
-def load_data(filename):
-    dtype = [('timestamp', 'int'), ('x', 'int'), ('y', 'int'), ('sign', 'int')]
-    return np.loadtxt(filename, dtype)
-
+# def compute_deltas(data, ignore_same=True, ignore_plus=False):
+#    n = data.size
+#    dtype = [('timestamp', 'int'), ('x', 'int'), ('y', 'int'), ('sign', 'int'),
+#             ('delta', 'float'), ('frequency', 'float'),
+#              ('valid', 'bool'), ('same', 'bool')]
+#    # copy fields we know
+#    fdata = np.zeros(n, dtype=dtype)
+#    fdata['x'][:] = data['x']
+#    fdata['y'][:] = data['y']
+#    fdata['timestamp'][:] = data['timestamp']
+#    fdata['sign'][:] = data['sign']
+#    
+#    x = data['x']
+#    y = data['y']
+#    timestamp = data['timestamp']
+#    # remember last event
+#    last = np.zeros((128, 128), 'int')
+#    last_sign = np.zeros((128, 128), 'int')
+#    last.fill(timestamp[0])
+#    delta = fdata['delta']
+#    frequency = fdata['frequency']
+#    valid = fdata['valid']
+#    sign = data['sign']
+#    same = fdata['same']
+#    
+#    for i in xrange(n):
+#        t = timestamp[i]
+#        
+#        if ignore_plus and sign[i] == 1:
+#            valid[i] = False
+#            continue
+#        
+#        l = last[x[i], y[i]]
+#        delta[i] = (t - l) * 0.000001
+#        frequency[i] = 1.0 / delta[i]
+#        
+#        is_same = sign[i] == last_sign[x[i], y[i]]
+#        if is_same and ignore_same:
+#            valid[i] = False
+#            continue
+#        else:
+#            pass 
+#
+#        last[x[i], y[i]] = t        
+#        
+#        valid[i] = delta[i] > 0
+#        same[i] = is_same
+#        last_sign[x[i], y[i]] = sign[i]
+#        
+#    use = fdata['valid']  
+#    res = fdata[use]
+#    
+#    assert np.all(res['delta'] > 0)
+#
+#    return res
+#
+#
+# def load_data(filename):
+#    dtype = [('timestamp', 'int'), ('x', 'int'), ('y', 'int'), ('sign', 'int')]
+#    return np.loadtxt(filename, dtype)

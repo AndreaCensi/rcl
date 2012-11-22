@@ -22,6 +22,8 @@ class AER_Filter(object):
             fe['delta'] = e['timestamp'] - le['timestamp']
             fe['same'] = (e['sign'] == le['sign'])
 
-            fe['frequency'] = 1.0 / fe['delta']
-            yield fe
+            if fe['delta'] > 0:
+                
+                fe['frequency'] = 1.0 / fe['delta']
+                yield fe
 

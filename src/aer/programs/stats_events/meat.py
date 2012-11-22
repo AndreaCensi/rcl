@@ -1,29 +1,31 @@
 from . import logger, np
+# from aer.programs.stats_freq.meat import compute_deltas  # XXX
+# from aer.programs.stats_freq.meat import load_data  # XXX
 from reprep import Report
-from aer.programs.stats_freq.meat import load_data  # XXX
-from aer.programs.stats_freq.meat import compute_deltas  # XXX
+from aer.filters.pipelines import aer_pipeline_transitions1_all
 
 
-def aer_stats_events_meat(log):
-    logger.info('Loading data from %r' % log)
-    data = load_data(log)
-    logger.info('Found %s samples' % data.size)
-    ignore_same = False
-    fdata = compute_deltas(data, ignore_same=ignore_same, ignore_plus=True)
+def aer_stats_events_meat(log, sign=(-1)):
+#    logger.info('Loading data from %r' % log)
+#    data = load_data(log)
+#    logger.info('Found %s samples' % data.size)
+#    ignore_same = False
+#    fdata = compute_deltas(data, ignore_same=ignore_same, ignore_plus=True)
+#    
+    fdata = aer_pipeline_transitions1_all(log, sign=sign)
+
     logger.info('Found %s valid deltas' % fdata.size)
     logger.info('percentage same: %s ' % np.mean(fdata['same']))
     logger.info('filtered')
     
-    T = data['timestamp'][-1] - data['timestamp'][0]
-    logger.info('Delta: %s' % T)
     logger.info('Plotting...')
     
     r = Report('index')
     
     f = r.figure(cols=3)
     
-    x = data['x']
-    y = data['y']
+    x = fdata['x']
+    y = fdata['y']
      
     bins = (range(np.max(x)), range(np.max(y)))
     h, _, _ = np.histogram2d(x, y, bins=bins)
