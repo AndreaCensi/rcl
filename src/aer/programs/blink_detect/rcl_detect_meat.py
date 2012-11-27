@@ -1,5 +1,6 @@
 from . import TrackerFixedFreq, logger
 from aer import aer_load_log_generic
+from aer.filters import aer_pipeline_transitions1, aer_pipeline_transitions1_all
 from aer.utils import md_argmax
 from aer_led_tracker import AERTrackLogWriter
 from contracts import contract
@@ -9,15 +10,19 @@ from scipy.ndimage import gaussian_filter
 import itertools
 import numpy as np
 import os
-from aer.filters import aer_pipeline_transitions1
 
 
-def rcl_detect(log, frequencies, sigma, outdir, detect_smooth_sigma=1.0,
+def rcl_detect(log, pipeline, frequencies, sigma, outdir, detect_smooth_sigma=1.0,
                detect_neighbors=10, write_png=False):
-    raw_sequence = aer_load_log_generic(log)
-    transitions = aer_pipeline_transitions1(raw_sequence)
     
-    trackers = [TrackerFixedFreq(f, sigma) for f in frequencies]
+    if False:
+        raw_sequence = aer_load_log_generic(log)
+        transitions = aer_pipeline_transitions1(raw_sequence, pipeline)
+    else:
+        transitions = aer_pipeline_transitions1_all(log, pipeline)
+    
+    interval = 1.0 / min(frequencies)
+    trackers = [TrackerFixedFreq(f, sigma, interval=interval) for f in frequencies]
 
     tracks_filename = os.path.join(outdir, 'all.tracks.txt')
     tracklog = AERTrackLogWriter(tracks_filename)
@@ -41,6 +46,7 @@ def rcl_detect(log, frequencies, sigma, outdir, detect_smooth_sigma=1.0,
             res = tracker.integrate(f)
             if res is not None:
                 handle_tracker_res(tracker, res, f['timestamp'])
+
 
 @contract(accum='array[HxW]', center='seq[2](int)', neighbors='int,>1')
 def centroid_estimate2(accum, center, neighbors):
@@ -86,8 +92,8 @@ def peak_detect(accum, sigma, neighbors):
     res['centroid_nevents'] = nevents
     return res
     
-def rcl_detect_write_png(tracker, detection, timestamp, outdir):
     
+def rcl_detect_write_png(tracker, detection, timestamp, outdir):
     dirname = os.path.join(outdir, 'f%05d' % tracker.freq)
     
     def write_image(name, values):    
@@ -102,35 +108,13 @@ def rcl_detect_write_png(tracker, detection, timestamp, outdir):
         logger.debug('print to %r' % filename)
 
     c = detection['centroid']
-    for name in ['accum', 'accum_cleared', 'accum_smooth']:
+    
+    videos = ['accum', 'accum_cleared', 'accum_smooth']
+    videos = ['accum'] 
+    for name in videos:
         value = detection[name]
         value[c[0], c[1]] = np.nan
         write_image(name, value)
         
+             
          
-    
-
-#
-#
-# Mi = construct_matrix((128, 128), lambda i, _: i)
-# Mj = construct_matrix((128, 128), lambda _, j: j)
-#
-#
-#
-# @contract(accum='array[HxW]', center='seq[2](int)', neighbors='int,>1')
-# def centroid_estimate(accum, center, neighbors):
-#    """ Returns S, mi, mj """
-#    accum = accum.copy()
-#    i, j = center[0], center[1]
-#    # Set as 0
-#    mask = np.zeros((128, 128), dtype=bool)
-#    mask.fill(True)
-#    mask[max(0, i - neighbors):min(127, i + neighbors),
-#          max(0, j - neighbors):min(127, j + neighbors)] = False
-#    accum[mask] = 0  
-#    # compute mean coordinate
-#    S = accum.sum()
-#    mi = (accum * Mi).sum() / S
-#    mj = (accum * Mj).sum() / S
-#    return accum, S, mi, mj
-

@@ -1,18 +1,19 @@
 import numpy as np
 
 class TrackerFixedFreq():
-    def __init__(self, freq, sigma, shape=(128, 128)):
+    def __init__(self, freq, sigma, interval=None, shape=(128, 128)):
         self.freq = freq
         self.sigma = sigma
         
-        self.last_motion = None
-        self.motion_interval = 0.001
-
         self.start_frame = None
         self.accum = None
+        
         self.shape = shape
         
-        self.interval = 1.0 / freq
+        if interval is None:
+            interval = 1.0 / freq
+    
+        self.interval = interval
         
     def integrate(self, aer_filtered_event):
         """ Returns either None or a numpy array if done """

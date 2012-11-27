@@ -6,6 +6,7 @@ class RCLFilterPhaseApp(QuickApp):
     
     def define_options(self, params):
         params.add_string("log", help='source file', compulsory=True)    
+        params.add_string("pipeline", help='p2n,n2p,both', default='both')
         params.add_int("fd", default=1000, help='frequency discretization')
         params.add_int("pd", default=100, help="phase discretization")
         params.add_float("f_min", default=100)
@@ -15,7 +16,7 @@ class RCLFilterPhaseApp(QuickApp):
                             
     def define_jobs(self):
         options = self.get_options()
-        stats = self.comp(filter_phase, log=options.log,
+        stats = self.comp(filter_phase, log=options.log, pipeline=options.pipeline,
                           f_min=options.f_min,
                           f_max=options.f_max,
                           fd=options.fd,

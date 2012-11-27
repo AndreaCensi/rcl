@@ -1,4 +1,5 @@
-from .. import aer_raw_event_dtype
+from . import logger
+from aer import aer_raw_event_dtype
 from io import BufferedReader
 import io
 import numpy as np
@@ -23,15 +24,74 @@ def aer_raw_events_from_file(filename):
         a['sign'] = s
         yield a
         count += 1
+        
 
-def aer_load_from_file(filename):
+def aer_raw_events_from_file_all(filename, limit=None):
+    """ Returns an array of raw events """
+    logger.info('Reading from %s ' % filename)
+    f, _ = read_aer_header(filename)
+
+    rest = f.read() 
+    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    nevents = data.size / 2
+    
+    if limit is not None:
+        nevents = limit
+
+    logger.info('Reading %d events...' % nevents)
+
+    e = np.zeros(shape=nevents, dtype=aer_raw_event_dtype)
+    e_x = e['x']
+    e_y = e['y']
+    e_ts = e['timestamp']
+    e_s = e['sign']
+    
+    for i in xrange(nevents):
+        address = data[i * 2]
+        timestamp = data[i * 2 + 1]
+        x, y, s = address2xys(address)
+        e_s[i] = s
+        e_x[i] = x
+        e_y[i] = y
+        e_ts[i] = timestamp * 0.000001
+
+    logger.info('... done')
+    
+    return e
+
+
+def aer_load_from_file(filename, read_as_block=True):
     """ Yields tuples (ts_mus, x,y,s) """
+    f, _ = read_aer_header(filename)
+    
+    if read_as_block:
+        return read_block(f)
+    else:
+        return read_incrementally(f)
+    
+def read_aer_header(filename):
     f = io.open(filename, 'r+b') 
     f = BufferedReader(f)
     comments = read_comments(f)
     if not 'AER-DAT2.0' in comments[0]:
         msg = 'Can only read 2.0 files'
-        raise ValueError(msg) 
+        raise ValueError(msg)
+    return f, comments
+    
+def read_block(f):
+    rest = f.read() 
+    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    nevents = data.size / 2
+    for i in xrange(nevents):
+        address = data[i * 2]
+        timestamp = data[i * 2 + 1]
+        x, y, s = address2xys(address)
+        
+        if i % 100000 == 0:
+            print('%3.1f%% %6s/%6s' % (i * 100.0 / data.size, i, data.size))
+        yield timestamp, x, y, s
+
+def read_incrementally(f):
     while f:
         s = f.read(4)
         if len(s) != 4:
@@ -39,8 +99,7 @@ def aer_load_from_file(filename):
         address = np.fromstring(s, dtype=np.int32).newbyteorder('>')
         x, y, s = address2xys(address)
 
-        ts_str = f.read(4)
-          
+        ts_str = f.read(4)          
         ts = np.fromstring(ts_str, dtype=np.int32).newbyteorder('>')
 
         yield ts[0], x, y, s

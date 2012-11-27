@@ -1,5 +1,5 @@
+from aer.stats import aer_histogram, aer_histogram_sign
 from procgraph import simple_block
-from rcl.library.stats import aer_histogram, aer_histogram_sign
 
 
 @simple_block
@@ -9,7 +9,6 @@ def aer_events_hist(events):
 @simple_block
 def aer_events_hist_sign(events):
     return aer_histogram_sign(events)
-
 
 
 @simple_block

@@ -2,7 +2,6 @@
 --- model aer_events_show
 """ Displays several statistics of events streams """
 config filename
-config out
 config interval = 0.001 
 
 import procgraph_aer
@@ -31,7 +30,7 @@ rgb_all, rgb_pos, rgb_neg  -> |sync| -> |grid cols=3| -> rgb
 
 rgb -> |info|
 
-rgb -> |mencoder file=$out|
+rgb -> |mencoder file="${filename}-${interval}.mp4"|
 
 
 

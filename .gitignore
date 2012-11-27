@@ -7,3 +7,6 @@ compmake_storage
 .noseids
 .compmake_history.txt
 aer_events_show.png
+*.mp4
+*.tracks.txt
+*.timestamps

@@ -1,26 +1,27 @@
 from aer import aer_load_log_generic
 from quickapp import QuickApp
 from reprep import Report
-import numpy as np
 import sys
+from aer.filters.pipelines import collect_all
+from aer.stats import aer_histogram
 
 def aer_simple_stats(log):
-    h = np.zeros((128, 128))
+    events = collect_all(aer_load_log_generic(log))
+    sign = events['sign']
+    h_all = aer_histogram(events)
+    h_plus = aer_histogram(events[sign == +1])
+    h_minus = aer_histogram(events[sign == -1])
 
-    count = 0    
-    for e in aer_load_log_generic(log):
-        print count, e
-        h[e['x'], e['y']] += 1
-        count += 1
-         
-    return dict(h=h)
+    return dict(h_all=h_all, h_plus=h_plus, h_minus=h_minus)
 
 def aer_simple_stats_report(stats):
-    h = stats['h']
     r = Report('simplestatsreport')
     
     f = r.figure()
-    r.data('histogram', h).display('scale').add_to(f)
+    for n in ['h_all', 'h_plus', 'h_minus']:
+        h = stats[n]
+        cap = '%d events' % (h.sum())
+        r.data(n, h).display('scale').add_to(f, caption=cap)
     
     return r
 

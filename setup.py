@@ -32,13 +32,15 @@ setup(name='RCL',
         'PyContracts>=1.2,<2',
         'PyYAML',
         'python-cjson',
-        'PyGeometry'
+        'PyGeometry',
+        'quickapp'
       ],
       tests_require=['nose>=1.1.2,<2'],
       entry_points={
 
          'console_scripts': [
                 'aer_read_log = aer.programs:aer_read_log_main',
+                'aer_video = aer.programs:aer_video_main',
                 'aer_simple_stats = aer.programs:aer_simple_stats_main',
                 'aer_stats_events = aer.programs:aer_stats_events_main',
                 'aer_stats_freq = aer.programs:aer_stats_freq_main',

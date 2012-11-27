@@ -9,7 +9,7 @@ class AERStatsEventsApp(QuickApp):
                             
     def define_jobs(self):
         options = self.get_options()
-        report = self.comp(aer_stats_events_meat, options.log)        
+        report = self.comp(aer_stats_events_meat, options.log, options.pipeline)        
         self.add_report(report, 'rep1')
  
 

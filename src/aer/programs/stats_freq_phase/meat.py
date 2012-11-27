@@ -1,12 +1,10 @@
-from aer import aer_load_log_generic
-from aer.filters import aer_filtered_cutoff, aer_pipeline_transitions1
+from aer.filters import aer_filtered_cutoff, aer_pipeline_transitions1_all
 from reprep import Report
 import numpy as np
 
  
-def filter_phase(log, f_min, f_max, fd, pd, n_stop=0, sign=(-1)):
-    raw_sequence = aer_load_log_generic(log)
-    transitions = aer_pipeline_transitions1(raw_sequence, sign=sign)
+def filter_phase(log, pipeline, f_min, f_max, fd, pd, n_stop=0):
+    transitions = aer_pipeline_transitions1_all(log, pipeline)
     stream = aer_filtered_cutoff(transitions, f_min, f_max)
     
     P = np.zeros((fd, pd))
@@ -37,7 +35,7 @@ def filter_phase_report(stats):
     
     r = Report('unknown')
     f = r.figure()
-    r.data('P', P).display('scale').add_to(f)
+    r.data('P', P.T).display('scale').add_to(f)
     
     return r    
     

@@ -6,10 +6,11 @@ class AERStatsFreqApp(QuickApp):
     
     def define_options(self, params):
         params.add_string("log", help='source file', compulsory=True)    
+        params.add_string("pipeline", help='p2n,n2p,both', compulsory=True)    
                             
     def define_jobs(self):
         options = self.get_options()
-        report = self.comp(aer_stats_freq_meat, options.log, sign=(-1))        
+        report = self.comp(aer_stats_freq_meat, options.log, options.pipeline)        
         self.add_report(report, 'rep1')
  
 
