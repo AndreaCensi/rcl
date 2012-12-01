@@ -39,17 +39,17 @@ setup(name='RCL',
       entry_points={
 
          'console_scripts': [
-                'aer_read_log = aer.programs:aer_read_log_main',
-                'aer_video = aer.programs:aer_video_main',
-                'aer_simple_stats = aer.programs:aer_simple_stats_main',
-                'aer_stats_events = aer.programs:aer_stats_events_main',
-                'aer_stats_freq = aer.programs:aer_stats_freq_main',
-                'aer_stats_freq_phase = aer.programs:aer_stats_freq_phase_main',
-                'aer_blink_detect = aer.programs:aer_blink_detect_main',
-
-                'rcl_detect = rcl.programs.detect:rcl_detect_main',
-                'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
-                'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
+            'aer_read_log = aer.programs:aer_read_log_main',
+            'aer_video = aer.programs:aer_video_main',
+            'aer_simple_stats = aer.programs:aer_simple_stats_main',
+            'aer_stats_events = aer.programs:aer_stats_events_main',
+            'aer_stats_freq = aer.programs:aer_stats_freq_main',
+            'aer_stats_freq_phase = aer.programs:aer_stats_freq_phase_main',
+            'aer_blink_detect = aer.programs:aer_blink_detect_main',
+            'aer_tracker_plot = aer_led_tracker.programs.plot:aer_tracker_plot_main',
+            'rcl_detect = rcl.programs.detect:rcl_detect_main',
+            'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
+            'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
         ]
       }
 )

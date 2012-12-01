@@ -4,54 +4,54 @@ from aer.filters import aer_pipeline_transitions1_all
 from aer.stats import aer_histogram
 
 def aer_stats_freq_meat(log, pipeline):
-    fdata = aer_pipeline_transitions1_all(log, pipeline)
+    events = aer_pipeline_transitions1_all(log, pipeline)
     
     r = Report('index')
-    
-    f = r.figure(cols=3)
-    
-    min_f = 20.0
-    max_f = 3000.0
-    min_d = 1.0 / max_f
-    max_d = 1.0 / min_f
-    
-    delta_s = fdata['delta'] 
-    frequency = 1.0 / delta_s 
-    
-    valid = np.logical_and(frequency > min_f, frequency < max_f)
-    
-    logger.info('Valid: %s' % (np.mean(valid) * 100))
-    frequency = frequency[valid]
-    delta_s = delta_s[valid]
+        
+    with r.subsection('all') as sub:
+        report_band(sub, events, min_f=20.0, max_f=3000.0)
 
-    def show_heat(pylab, events):
-        if events.size > 0:
-            h = aer_histogram(events)
-        else:
-            h = np.zeros((128, 128))
-        pylab.imshow(h)
+    with r.subsection('high') as sub:
+        report_band(sub, events, min_f=500.0, max_f=3000.0)
+            
+    return r
+    
+    
+def report_band(r, events, min_f, max_f):
+    valid = np.logical_and(events['frequency'] > min_f, events['frequency'] < max_f)
+    nvalid = np.sum(valid)
+    sel_events = events[valid]
+    caption = ('Found %s (%s%%) events in the frequency range (%s, %s)' 
+               % (nvalid, np.mean(valid) * 100, min_f, max_f))
+    logger.info(caption) 
+    f = r.figure(caption=caption, cols=2)
 
-    print('events')
     with f.plot('events') as pylab:
-        show_heat(pylab, fdata)
+        show_heat(pylab, sel_events)
     
-    print('freq')
     with f.plot('freq') as pylab:
         fbins = np.linspace(min_f, max_f, 1000)
-        pylab.hist(frequency, bins=fbins)
+        pylab.hist(sel_events['frequency'], bins=fbins)
 
-    if False:     
-        print('deltaraw')
-        with f.plot('delta_raw') as pylab:
-            pylab.hist(fdata['delta'], bins=1000)
-        
-        print('deltas_clipped')
-        with f.plot('delta_s_clipped') as pylab:
-            dbins = np.linspace(min_d, max_d, 1000)
-            pylab.hist(delta_s, bins=dbins)
-    
-    print('done') 
-    
-    return r
-         
-     
+#    if False:     
+#        min_d = 1.0 / max_f
+#        max_d = 1.0 / min_f
+#
+#        print('deltaraw')
+#        with f.plot('delta_raw') as pylab:
+#            pylab.hist(fdata['delta'], bins=1000)
+#            delta_s = delta_s[valid]
+#
+#        print('deltas_clipped')
+#        with f.plot('delta_s_clipped') as pylab:
+#            dbins = np.linspace(min_d, max_d, 1000)
+#            pylab.hist(delta_s, bins=dbins)
+#    
+#    print('done')      
+ 
+def show_heat(pylab, events):
+    if events.size > 0:
+        h = aer_histogram(events)
+    else:
+        h = np.zeros((128, 128))
+    pylab.imshow(h)

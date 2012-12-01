@@ -19,9 +19,10 @@ def aer_pipeline_transitions1_all(filename, name):
     """ Uses caches """
     cache_name = os.path.splitext(filename)[0] + '.events-%s.pickle' % name
     if os.path.exists(cache_name):
-        logger.debug('Using cache %s ' % filename)
+        logger.debug('Using cache %s ' % cache_name)
         return safe_pickle_load(cache_name)
     else:
+        logger.debug('Cache not found %s' % cache_name)
         values = aer_pipeline_transitions1_all_slave(filename, name)
         safe_pickle_dump(values, cache_name)
         return values
