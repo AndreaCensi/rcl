@@ -1,0 +1,16 @@
+--- model aer_track_plot
+config log
+
+config width = 256
+ 
+|aer_tracker_log file=$log| --> |aer_smoother ntracks=4| --> tracks
+
+tracks -> |aer_track_plotter   width=$width| -> rgb_track
+tracks -> |aer_quality_plotter width=$width| -> rgb_quality
+
+#tracks -> |info|
+
+rgb_track, rgb_quality -> |sync| -> |grid cols=2| -> rgb
+
+rgb -> |imwrite file="${log}-plot.frame.png"|
+rgb -> |mencoder file="${log}-plot.mp4" fps=30|
