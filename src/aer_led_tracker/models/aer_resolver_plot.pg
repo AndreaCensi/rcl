@@ -1,0 +1,19 @@
+--- model aer_resolver_plot
+config log
+
+config width = 256
+ 
+|aer_tracker_log file=$log| --> raw_tracks --> |aer_smoother ntracks=4| --> tracks
+
+tracks -> |aer_track_plotter   width=$width| -> rgb_track
+tracks -> |aer_quality_plotter width=$width| -> rgb_quality
+
+raw_tracks -> |aer_resolver| -> resolved 
+
+resolved -> |slice start=0 end=0| -> |aer_alt_plotter width=$width| -> rgb_resolved1
+resolved -> |slice start=1 end=1| -> |aer_alt_plotter width=$width| -> rgb_resolved2
+
+rgb_track, rgb_quality, rgb_resolved1, rgb_resolved2 -> |sync| -> |grid cols=2| -> rgb
+
+rgb -> |imwrite file="${log}-resplot.frame.png"|
+rgb -> |mencoder file="${log}-resplot.mp4" fps=30|
