@@ -13,7 +13,7 @@ import numpy as np
 import itertools
  
 class MultipleDetector(object):
-    def __init__(self, log, pipeline, sigma, outdir, suffix,
+    def __init__(self, log, pipeline, sigma, outdir, tracks_filename,
                interval=None,
                min_led_distance=0, weight_others=0,
                detect_smooth_sigma=1.0,
@@ -34,7 +34,7 @@ class MultipleDetector(object):
             self.trackers.append(tracker)
 
         # start track log
-        tracks_filename = os.path.splitext(log)[0] + '.%s.tracks' % suffix
+#        tracks_filename = os.path.splitext(log)[0] + '.%s.tracks' % suffix
         self.tracklog = AERTrackLogWriter(tracks_filename)
         params = dict(frequencies=frequencies,
                       sigma=sigma, weight_others=weight_others,
@@ -149,12 +149,22 @@ def remove_occupied(accum, occupied, distance):
         y = int(y)
         mask = get_mask(accum, x, y, distance)
         accum[mask] = 0
+        assert accum[x, y] == 0
     return accum    
 
-        
-def get_mask(accum, x, y, neighbors):
-    xs = np.array(range(max(0, x - neighbors), min(accum.shape[0], x + neighbors)))
-    ys = np.array(range(max(0, y - neighbors), min(accum.shape[1], y + neighbors)))
+    
+def get_mask(accum, x, y, n):
+    H, W = accum.shape
+    x0 = max(x - n, 0)
+    x1 = min(x + n, H - 1)
+    y0 = max(y - n, 0)
+    y1 = min(y + n, W - 1)
+    xs = np.array(range(x0, x1 + 1), 'int')
+    ys = np.array(range(y0, y1 + 1), 'int')
+    assert xs[0] == x0
+    assert xs[-1] == x1
+    assert ys[0] == y0
+    assert ys[-1] == y1
     mask = np.zeros(shape=accum.shape, dtype='bool')
     mask.fill(False)
     for x in xs:

@@ -4,7 +4,7 @@ class TrackerFixedFreq():
     def __init__(self, freq, others, others_weight, sigma,
                         interval=None, shape=(128, 128)):
         print('freq: %s  others: %s' % (freq, others))
-        self.freq = freq
+        self.frequency = freq
         
         self.start_frame = None
         self.accum = None
@@ -17,12 +17,12 @@ class TrackerFixedFreq():
         self.interval = interval
         
         self.factors = [(others_weight, fo, sigma) for fo in others] + \
-                     [(+1, self.freq, sigma)]
+                     [(+1, self.frequency, sigma)]
             
         self.prev_accum = None
         
     def __repr__(self):
-        return 'Tracker(%6d, %4.2fms)' % (self.freq, 1000 * self.interval)
+        return 'Tracker(%6d, %4.2fms)' % (self.frequency, 1000 * self.interval)
         
     def has_frame(self):
         """ Return true if at least one frame is finished """
@@ -57,8 +57,6 @@ class TrackerFixedFreq():
             self.start_frame = t
             self.prev_accum = self.accum
             self.accum = np.zeros(self.shape, 'float')
-#            res = np.maximum(0, current)
-#            print(np.min(res), np.max(res))
             return self.prev_accum
         else:
             return None
