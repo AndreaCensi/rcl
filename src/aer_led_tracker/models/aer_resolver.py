@@ -12,7 +12,7 @@ class AERResolver(Block):
     Block.config('history', default=0.005)
     
     Block.config('max_hp', 'Maximum number of hypotheses to show',
-                 default=5)
+                 default=10)
     
     def init(self):
         motion_model = MaxVelMotion(self.config.max_vel,
@@ -25,8 +25,7 @@ class AERResolver(Block):
     def update(self):
         self.resolver.push(self.input.track_log)
         
-        res = self.resolver.compute_alternatives_combinatorial()
-        alts = res['alts']
+        alts = self.resolver.compute_alternatives_combinatorial()
  
         hps = alts
         N = self.config.max_hp

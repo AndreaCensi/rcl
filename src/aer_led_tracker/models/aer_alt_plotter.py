@@ -1,7 +1,7 @@
 from aer_led_tracker.models.aer_track_plotter import plot_tracks
 from aer_led_tracker.resolver import enumerate_id_track
 from procgraph import Block
-from procgraph_mpl.plot_generic import PlotGeneric
+from procgraph_mpl import PlotGeneric
 
 
 class AERAltPlotter(Block):
@@ -24,16 +24,14 @@ class AERAltPlotter(Block):
         alts = self.input.alts
 
         markers = ['s', 'o', 'x']
+        quality = ['%f' % x.score for x in alts]
         for i, alt in enumerate(alts):
             subset = alt.subset
-            print subset
             # get the last ones
-            tracks = get_last(subset)
-            print tracks
-            
+            tracks = get_last(subset)            
             marker = markers[i % len(markers)]
             plot_tracks(pylab, tracks, base_markersize=10, marker=marker)
-        
+            pylab.text(10, 10, quality)
 
 def get_last(subset):
     tracks = {}

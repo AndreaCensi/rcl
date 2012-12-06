@@ -1,7 +1,8 @@
-import numpy as np
-import itertools
-from contracts import contract
 from abc import abstractmethod, ABCMeta
+from contracts import contract
+from operator import attrgetter
+import itertools
+import numpy as np
 
 
 class MotionModel(object):
@@ -33,10 +34,13 @@ class MaxVelMotion(MotionModel):
                 return 1
             else:
                 delta_time = np.abs(t1['timestamp'] - t2['timestamp'])
-                distance = vector_norm(track_coords(t1) - track_coords(t2))  
+                distance = vector_norm(track_coords(t1) - track_coords(t2))
+                if False:  # XXX  
                 # suppose that it could fly away at max_vel
                 # it could be at minimum at this distance
-                min_distance = distance + delta_time * self.max_vel
+                    min_distance = distance + delta_time * self.max_vel
+                else:
+                    min_distance = distance
                 if min_distance <= self.min_dist:
                     return 0
                 else:
@@ -48,9 +52,6 @@ class MaxVelMotion(MotionModel):
             p *= probability2(tracks[i:i + 1], tracks[j:j + 1])
         return p
      
-         
-         
-    
     def probability_velocity(self, tracks):
         for _, its_tracks in enumerate_id_track(tracks):
             if len(its_tracks) == 1:
@@ -122,8 +123,15 @@ class Resolver(object):
     @contract(track_observations='array[>=1]')
     def push_obs(self, track_observations):
         self.buffer.append(track_observations)
-        last = self.buffer[-1][0]['timestamp']        
-        while self.buffer[0][0]['timestamp'] <= last - self.history:
+        
+        def too_big():
+            t1 = self.buffer[-1][0]['timestamp']
+            t0 = self.buffer[0][0]['timestamp']
+            delta = t1 - t0
+            print('Current delta: %s  n: %s' % (delta, len(self.buffer)))
+            return delta > self.history
+                
+        while too_big():
             self.buffer.pop(0)
 
     def push(self, track_observations):
@@ -147,25 +155,35 @@ class Resolver(object):
 
 
 class Alternative():
-    def __init__(self, id_choice, score, motion_score, obs_score, subset):
+    def __init__(self, id_choice, score, motion_score, obs_score, subset, nmisses,
+                 ntracks):
         self.id_choice = id_choice
         self.score = score
         self.motion_score = motion_score
         self.obs_score = obs_score
         self.subset = subset
+        self.nmisses = nmisses
+        self.ntracks = ntracks
     
     def __repr__(self):
-        return ("Alt(id:%s;score:%g;motion:%g;obs:%g)" % 
-        (self.id_choice, self.score, self.motion_score, self.obs_score))
+        return ("Alt(id:%s;#:%d;score:%g;motion:%g;obs:%g)" % 
+        (self.id_choice, self.ntracks, self.score, self.motion_score, self.obs_score))
 
 
 def alternatives_print(alts):
     for i, x in enumerate(alts):
         print('%s: %s' % (i, x))
         
+MISS = '-'
 @contract(obs_buffer='list[>=1](array[>=1])')
 def select_tracks(obs_buffer, choice):
-    chosen = [obs[i] for obs, i in zip(obs_buffer, choice)]
+    chosen = []
+    for obs, i in zip(obs_buffer, choice):
+        if i == MISS:
+            continue
+        chosen.append(obs[i])
+    if not chosen:
+        raise ValueError('all misses')
     return np.array(chosen, chosen[0].dtype)
     
 @contract(obs_buffer='list[>=1](array[>=1])')
@@ -174,34 +192,51 @@ def compute_alternatives_combinatorial(obs_buffer, motion_model):
     
     options = []
     for b in obs_buffer:
-        options.append(range(len(b)))
+        options.append(range(len(b)) + [MISS])
 
-    print map(len, obs_buffer)
+    delta = obs_buffer[-1][0]['timestamp'] - obs_buffer[0][0]['timestamp']
+    print 'delta: %fs hps: %s' % (delta, map(len, obs_buffer))
 
     choices = []
     all_options = itertools.product(*tuple(options))     
     for c in all_options:
+        # Skip if all misses
+        nmisses = len([x for x in c if x == MISS])
+        if nmisses == len(c):
+            continue
+        
         tracks = select_tracks(obs_buffer, c)
-        assert len(tracks) == len(obs_buffer)
-        motion_score = np.log(motion_model.probability_joint(tracks))
+        ntracks = len(np.unique(tracks['id_track']))
+        assert len(tracks) == len(obs_buffer) - nmisses
+        motion_prob = motion_model.probability_joint(tracks)
+        
+        if motion_prob == 0:
+            # Do not write those with impossible prob.
+            continue
+        
+        motion_score = np.log(motion_prob)
         obs_score = np.sum(np.log(tracks['quality']))
         score = motion_score + obs_score
         id_choice = "".join(map(str, c))
         alt = Alternative(id_choice=id_choice,
                           score=score,
+                          ntracks=ntracks,
                           motion_score=motion_score,
                           obs_score=obs_score,
+                          nmisses=nmisses,
                           subset=tracks)
         choices.append(alt)
     
-    choices.sort(key=lambda x: (-x.score))
+    sort_alternatives_ntracks_score(choices)
     
-    res = {}
-#    res['nchoices'] = len(choices)
-    res['alts'] = choices
-    
-    return res
+    return choices
 
+def sort_alternatives_ntracks_score(choices):
+    # Because python has stable sorting, we can do this:
+    choices.sort(key=attrgetter('score'), reverse=True)
+    choices.sort(key=attrgetter('ntracks'), reverse=True)
+
+ 
 def compute_alternatives(obs_buffer):
     """
         Returns a list of tuples
