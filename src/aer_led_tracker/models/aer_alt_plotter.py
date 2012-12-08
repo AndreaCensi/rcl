@@ -1,7 +1,8 @@
 from aer_led_tracker.models.aer_track_plotter import plot_tracks
-from aer_led_tracker.resolver import enumerate_id_track
+
 from procgraph import Block
 from procgraph_mpl import PlotGeneric
+from aer_led_tracker.tracks import enumerate_id_track
 
 
 class AERAltPlotter(Block):

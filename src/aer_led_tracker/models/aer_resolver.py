@@ -1,5 +1,6 @@
+from aer_led_tracker.resolver import Resolver, alternatives_print
 from procgraph import Block
-from aer_led_tracker.resolver import Resolver, alternatives_print, MaxVelMotion
+from aer_led_tracker.motion import MaxVelMotion
 
 class AERResolver(Block):
     Block.alias('aer_resolver')
@@ -25,12 +26,20 @@ class AERResolver(Block):
     def update(self):
         self.resolver.push(self.input.track_log)
         
-        alts = self.resolver.compute_alternatives_combinatorial()
+        
+        alts = self.resolver.compute_alternatives()
+ 
+        if False:
+            # check correct
+            alts2 = self.resolver.compute_alternatives_combinatorial()
+            alternatives_print(alts2, 'normal', n=4)
+        
+        alternatives_print(alts, 'fast', n=4)
  
         hps = alts
         N = self.config.max_hp
         if len(hps) > N:
             hps = hps[:N]
         
-        alternatives_print(hps)
+#        alternatives_print(hps)
         self.output.hps = hps

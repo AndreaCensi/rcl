@@ -1,6 +1,7 @@
 from StringIO import StringIO
 from aer_led_tracker.logio import aer_track_parse_stream_as_blocks
-from aer_led_tracker.resolver import Resolver, MaxVelMotion, alternatives_print
+from aer_led_tracker.resolver import Resolver, alternatives_print
+from aer_led_tracker.motion import MaxVelMotion
 
 tests = []
 

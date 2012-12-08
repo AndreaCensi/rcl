@@ -1,0 +1,24 @@
+--- model aer_particles_plot
+config log
+
+config width = 256
+ 
+|aer_tracker_log file=$log| --> raw_tracks --> |aer_smoother ntracks=4| --> tracks
+
+tracks -> |aer_track_plotter   width=$width| -> rgb_track
+tracks -> |aer_quality_plotter width=$width| -> rgb_quality
+
+raw_tracks -> |aer_pf| -> pf -> |aer_pf_plot| -> rgb2a
+
+pf -> |aer_pf_quality_plot| -> rgb2b
+
+rgb2a, rgb2b -> |sync| -> |grid cols=2| -> rgb2
+
+
+rgb_track, rgb_quality -> |sync| -> |grid cols=2| -> rgb1
+
+rgb1, rgb2 -> |sync| -> |grid cols=1| -> rgb
+
+
+rgb -> |imwrite file="${log}-resplot.frame.png"|
+rgb -> |mencoder file="${log}-resplot.mp4" fps=30|

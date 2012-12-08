@@ -1,6 +1,6 @@
-import os
-import numpy as np
 from StringIO import StringIO
+import numpy as np
+import os
 
 aer_track_dtype = [('timestamp', 'float'),
                    ('id_track', 'S32'),
@@ -8,7 +8,7 @@ aer_track_dtype = [('timestamp', 'float'),
                    ('peak', 'int'),
                    ('i', 'float'),
                    ('j', 'float'),
-                   ('quality', 'float'),
+                   ('quality', 'float')
                    ]
 
 def create_track_observation(frequency, timestamp, peak, npeaks, coords, quality):
