@@ -21,3 +21,4 @@ def aer_particles_plot(tracks, width):
 def aer_particles_plot_main():
     sys.exit(AERParticlesPlotApp().main())
     
+__all__ = ['aer_particles_plot_main']

@@ -1,9 +1,7 @@
 import numpy as np
 
 class TrackerFixedFreq():
-    def __init__(self, freq, others, others_weight, sigma,
-                        interval=None, shape=(128, 128)):
-        print('freq: %s  others: %s' % (freq, others))
+    def __init__(self, freq, sigma, interval=None, shape=(128, 128)):
         self.frequency = freq
         
         self.start_frame = None
@@ -16,8 +14,7 @@ class TrackerFixedFreq():
     
         self.interval = interval
         
-        self.factors = [(others_weight, fo, sigma) for fo in others] + \
-                     [(+1, self.frequency, sigma)]
+        self.factors = [(+1, self.frequency, sigma)]             
             
         self.prev_accum = None
         

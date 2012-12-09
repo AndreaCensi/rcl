@@ -29,8 +29,7 @@ class MHDetectorLog(object):
         for f in frequencies:
             others = list(frequencies)
             others.remove(f)
-            tracker = TrackerFixedFreq(f, others=[], others_weight=0,
-                                          sigma=sigma, interval=interval)
+            tracker = TrackerFixedFreq(f, sigma=sigma, interval=interval)
             self.trackers.append(tracker)
 
         # start track log

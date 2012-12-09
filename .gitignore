@@ -15,3 +15,9 @@ m6.i02p3d5.tracks-resplot.mp4.timestamps
 upanddown_3.i02p3d5.tracks-resplot.frame.png
 upanddown_3.i02p3d5.tracks-resplot.mp4-active.avi
 upanddown_3.i02p3d5.tracks-resplot.mp4.timestamps
+*.tracks
+*.tracks*png
+data
+data1
+data2
+data3

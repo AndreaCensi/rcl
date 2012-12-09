@@ -1,21 +1,6 @@
 from StringIO import StringIO
-import numpy as np
 import os
-
-aer_track_dtype = [('timestamp', 'float'),
-                   ('id_track', 'S32'),
-                   ('npeaks', 'int'),
-                   ('peak', 'int'),
-                   ('i', 'float'),
-                   ('j', 'float'),
-                   ('quality', 'float')
-                   ]
-
-def create_track_observation(frequency, timestamp, peak, npeaks, coords, quality):
-    id_track = '%d' % frequency
-    val = (timestamp, id_track, npeaks, peak, coords[0], coords[1], quality)
-    a = np.array(val, dtype=aer_track_dtype)
-    return a
+from . import aer_track_dtype, np
 
 
 class AERTrackLogWriter(object):
@@ -39,10 +24,10 @@ class AERTrackLogWriter(object):
         self.tracks.flush()
 
     def write_multiple(self, hps):
-#        s = StringIO()
-#        np.savetxt(s, hps[0])
-#        self.tracks.write(s.getvalue())
-#        self.tracks.flush()
+        # s = StringIO()
+        # np.savetxt(s, hps[0])
+        # self.tracks.write(s.getvalue())
+        # self.tracks.flush()
         for h in hps:
             self.write(h)
         
@@ -74,7 +59,6 @@ def aer_track_parse_stream_as_blocks(stream):
                 res = np.array(track_buffer, track_buffer[0].dtype)
                 yield res
                 track_buffer = []
-                
     x = aer_track_parse_stream_all(stream)
     for y in enumerate_as_blocks(x):
         yield y

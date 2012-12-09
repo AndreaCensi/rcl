@@ -8,17 +8,29 @@ config width = 256
 tracks -> |aer_track_plotter   width=$width| -> rgb_track
 tracks -> |aer_quality_plotter width=$width| -> rgb_quality
 
-raw_tracks -> |aer_pf| -> pf -> |aer_pf_plot| -> rgb2a
+raw_tracks -> |pd:aer_pf| -> particles, alternatives 
+ 
+pd.max_hp = 5
+pd.max_bound = 25
+pd.max_vel = 500
+pd.min_track_dist = 15
 
-pf -> |aer_pf_quality_plot| -> rgb2b
-
-rgb2a, rgb2b -> |sync| -> |grid cols=2| -> rgb2
-
-
-rgb_track, rgb_quality -> |sync| -> |grid cols=2| -> rgb1
-
-rgb1, rgb2 -> |sync| -> |grid cols=1| -> rgb
+particles -> |aer_pf_plot| -> rgb_pf
+particles -> |aer_pf_quality_plot| -> rgb_pf_q
 
 
-rgb -> |imwrite file="${log}-resplot.frame.png"|
-rgb -> |mencoder file="${log}-resplot.mp4" fps=30|
+alternatives -> |slice start=0 end=0| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved1
+alternatives -> |slice start=1 end=1| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved2
+alternatives -> |slice start=2 end=2| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved3
+alternatives -> |slice start=3 end=3| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved4
+
+rgb_resolved1, rgb_resolved2, rgb_resolved3, rgb_resolved4  -> \
+	|sync|->|grid cols=4|->rgb_bottom
+
+rgb_track, rgb_quality, rgb_pf, rgb_pf_q -> |sync| -> |grid cols=4| -> rgb_top
+
+rgb_top, rgb_bottom -> |sync| -> |grid cols=1| -> rgb
+
+
+rgb -> |imwrite file="${log}-parplot.frame.png"|
+rgb -> |mencoder file="${log}-parplot.mp4" fps=30|

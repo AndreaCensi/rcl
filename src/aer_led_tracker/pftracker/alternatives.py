@@ -3,78 +3,31 @@ from operator import attrgetter
 import itertools
 import numpy as np
 
-
-class Resolver(object):
-    
-    """ Resolves ambiguities based on track history """
-    def __init__(self, min_track_dist, motion_model, history):
-        """
-            :param history: Length of history to consider.
-            :param min_track_dist: Minimum distance between different track (pixels)
-            :param max_vel: Maximum velocity (pixels/s)
-        """
-        self.min_track_dist = min_track_dist
-        self.motion_model = motion_model
-        self.history = history
-        
-        self.buffer = []
-        
-    @contract(track_observations='array[>=1]')
-    def push_obs(self, track_observations):
-        self.buffer.append(track_observations)
-        
-        def too_big():
-            t1 = self.buffer[-1][0]['timestamp']
-            t0 = self.buffer[0][0]['timestamp']
-            delta = t1 - t0
-            print('Current delta: %s  n: %s' % (delta, len(self.buffer)))
-            return delta > self.history
-                
-        while too_big():
-            self.buffer.pop(0)
-
-    def push(self, track_observations):
-        """
-            :param track_observations: array of track_observations_dtype
-        """
-        self.push_obs(track_observations)
-        
-#        res = compute_alternatives(self.buffer)
-#        print res
-        
-        
-    def compute_alternatives(self):
-        print('------------')
-        alt1 = compute_alternatives_sep(self.buffer, self.motion_model)
-        print('------------')
-        alt1 = compute_alternatives(self.buffer, self.motion_model)
-        return alt1
-    
-    def compute_alternatives_combinatorial(self):
-        """ Uses a combinatorial algorithm """
-        return compute_alternatives_combinatorial(self.buffer, self.motion_model)
-
-
-
 class Alternative():
-    def __init__(self, id_choice, score, motion_prob,
-                 motion_score, obs_score, subset, nmisses,
+    @contract(id_choice='str', score='>=0', subset='array,is_particle_dtype',
+              nmisses='int,>=0', ntracks='int,>=1')
+    def __init__(self, id_choice, score,
+#                 motion_prob,
+#                 motion_score, 
+#                 obs_score, 
+                 subset, nmisses,
                  ntracks):
         self.id_choice = id_choice
         self.score = score
-        self.motion_score = motion_score
-        self.obs_score = obs_score
+#        self.motion_score = motion_score
+#        self.obs_score = obs_score
         self.subset = subset
         self.nmisses = nmisses
         self.ntracks = ntracks
-        self.motion_prob = motion_prob
+#        self.motion_prob = motion_prob
+    
     
     def zero_prob(self):
-        return self.motion_prob == 0
+        return self.score == 0
     
     def __repr__(self):
-        return ("Alt(id:%s;#:%d;score:%g;motion:%g;obs:%g)" % 
-        (self.id_choice, self.ntracks, self.score, self.motion_score, self.obs_score))
+        return ("Alt(id:%s;#:%d;score:%g)" % 
+        (self.id_choice, self.ntracks, self.score))
 
 
 def alternatives_print(alts, what=None, n=None):
@@ -89,10 +42,12 @@ def alternatives_print(alts, what=None, n=None):
         print('--- %s  (%s/%s) ---' % (what, n, num))
     for i, x in enumerate(alts):
         print('%s: %s' % (i, x))
+        # for p in x.subset:
+        #    print '--:', p
         
 MISS = '-'
 
-@contract(obs_buffer='list[>=1](array[>=1])')
+@contract(obs_buffer='list[>=1](list[>=1])')
 def select_tracks(obs_buffer, choice):
     chosen = []
     for obs, i in zip(obs_buffer, choice):
@@ -133,25 +88,28 @@ def compute_alternatives_combinatorial(obs_buffer, motion_model):
     return choices
 
 
-def make_alternative(obs_buffer, choice, motion_model):
+def make_alternative(obs_buffer, choice, score_function):
     assert len(obs_buffer) == len(choice)
     assert not all_misses(choice)
     tracks = select_tracks(obs_buffer, choice)
     assert len(tracks) == len(obs_buffer) - num_misses(choice)
     assert len(tracks) >= 0
     ntracks = len(np.unique(tracks['id_track']))
-    motion_prob = motion_model.probability_joint(tracks)
     
-    motion_score = np.log(motion_prob)
-    obs_score = np.sum(np.log(tracks['quality']))
-    score = motion_score + obs_score
+    score = score_function(tracks)
+    
+#    motion_prob = motion_model.probability_joint(tracks)
+#    
+#    motion_score = np.log(motion_prob)
+#    obs_score = np.sum(np.log(tracks['quality']))
+#    score = motion_score + obs_score
     id_choice = "".join(map(str, choice))
     alt = Alternative(id_choice=id_choice,
                       score=score,
                       ntracks=ntracks,
-                      motion_prob=motion_prob,
-                      motion_score=motion_score,
-                      obs_score=obs_score,
+#                      motion_prob=motion_prob,
+#                      motion_score=motion_score,
+#                      obs_score=obs_score,
                       nmisses=num_misses(choice),
                       subset=tracks)
     return alt
@@ -171,25 +129,19 @@ def sort_alternatives_ntracks_score(choices):
     choices.sort(key=attrgetter('ntracks'), reverse=True)
 
  
-
-def compute_alternatives_sep(obs_buffer, motion_model):
+#
+# def compute_alternatives_sep(obs_buffer, motion_model):
+#    id_tracks = set([x[0]['id_track'].item() for x in obs_buffer])
+#    res = {}
+#    for id_track in id_tracks:
+#        obs_track = [x for x in obs_buffer if x[0]['id_track'] == id_track]
+#        alts = compute_alternatives(obs_track, motion_model)
+#        res[id_track] = len(alts)
+#    print res
+#     
     
-    id_tracks = set([x[0]['id_track'].item() for x in obs_buffer])
-    
-    res = {}
-    for id_track in id_tracks:
-        obs_track = [x for x in obs_buffer if x[0]['id_track'] == id_track]
- 
-#        print('Computing for track %s' % id_track)
-#        
-        alts = compute_alternatives(obs_track, motion_model)
-        # alternatives_print(alts, 'track %s' % id_track, 5)
-        
-        res[id_track] = len(alts)
-    print res
-     
-    
-def compute_alternatives(obs_buffer, motion_model):
+@contract(obs_buffer='list[N,>=1](list[>=1])')
+def compute_alternatives(obs_buffer, score_function):
     """
         Returns a list of tuples
         
@@ -200,29 +152,29 @@ def compute_alternatives(obs_buffer, motion_model):
     debug['nterm'] = 0
     debug['ntest'] = 0
     debug['nstop'] = 0
-    obs_buffer.sort(key=lambda x: x[0]['id_track'])
+    obs_buffer.sort(key=lambda x: x[0]['id_track'])  # XXX
     res = compute_alternatives_slave(obs_buffer=obs_buffer,
-                                     motion_model=motion_model,
+                                     score_function=score_function,
                                      choice_so_far=[],
-                                      decided=[], remaining=obs_buffer,
-                                      debug=debug)
+                                     decided=[], remaining=obs_buffer,
+                                     debug=debug)
     
     ncomb = np.prod([(len(x) + 1) for x in obs_buffer])
     ndone = debug['niterations']
-    possible = len(res)
+#    possible = len(res)
     print('%d -> %d iterations instead of %d' % (len(obs_buffer), ndone, ncomb))
     print(debug)
-    print('possible: %d ' % possible)
+#    print('possible: %d ' % possible)
     sort_alternatives_ntracks_score(res)
+    # alternatives_print(res, what='coherent hps', n=10)
     return res
 
 
-@contract(obs_buffer='list[N,>=1](array[>=1])',
-          returns='list[>=1]')
-def compute_alternatives_slave(obs_buffer, motion_model, choice_so_far,
-                               decided, remaining,
-                               debug,
-                               max_misses=4):
+@contract(obs_buffer='list[N,>=1](list[>=1])',
+          returns='list[>=0]')
+def compute_alternatives_slave(obs_buffer, score_function,
+                               choice_so_far, decided, remaining,
+                               debug, max_misses=4):
     """
     
         decided: 
@@ -237,8 +189,11 @@ def compute_alternatives_slave(obs_buffer, motion_model, choice_so_far,
         # We have chosen everything
         if all_misses(choice_so_far):
             return []
-        alt = make_alternative(obs_buffer, choice_so_far, motion_model)
-        return [alt]
+        alt = make_alternative(obs_buffer, choice_so_far, score_function)
+        if alt.zero_prob():
+            return []
+        else:
+            return [alt]
     
     debug['niterations'] += 1
         
@@ -263,7 +218,7 @@ def compute_alternatives_slave(obs_buffer, motion_model, choice_so_far,
         else:
             # print 'evaluating choice %s' % c
             assert not all_misses(c)
-            partial = make_alternative(obs_buffer[:len(c)], c, motion_model)
+            partial = make_alternative(obs_buffer[:len(c)], c, score_function)
             ok = not partial.zero_prob()
             
         debug['ntest'] += 1
@@ -275,7 +230,7 @@ def compute_alternatives_slave(obs_buffer, motion_model, choice_so_far,
             decided2 = decided + [current]
             remaining2 = remaining[1:]
             x = compute_alternatives_slave(obs_buffer=obs_buffer,
-                                          motion_model=motion_model,
+                                          score_function=score_function,
                                           choice_so_far=c,
                                           decided=decided2,
                                           remaining=remaining2,
@@ -283,4 +238,3 @@ def compute_alternatives_slave(obs_buffer, motion_model, choice_so_far,
             res.extend(x)  
 
     return res
-

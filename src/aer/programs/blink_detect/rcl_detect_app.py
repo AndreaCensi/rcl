@@ -1,8 +1,7 @@
-from quickapp import QuickApp
-import sys
-from aer.programs.blink_detect.rcl_detect_meat import MultipleDetector
-import os
 from aer.programs.blink_detect.mhdetector import MHDetectorLog
+from quickapp import QuickApp
+import os
+import sys
  
 
 class AERBlinkDetect(QuickApp):
@@ -41,7 +40,7 @@ class AERBlinkDetect(QuickApp):
                        min_led_distance=options.min_led_distance,
                        interval=options.interval,
                        detect_smooth_sigma=1.0,
-                        write_png=options.video)
+                       write_png=options.video)
     
         #   if options.video2: #XXX
         if True: 

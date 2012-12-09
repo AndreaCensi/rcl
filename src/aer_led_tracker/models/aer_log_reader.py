@@ -1,10 +1,9 @@
 from aer_led_tracker import aer_track_parse_line
-from procgraph import Block, simple_block
+from procgraph import Block
 from procgraph.block_utils import TextLog
 import numpy as np
 
- 
-class AERLogReader(TextLog):
+class AERTrackerLogReader(TextLog):
     Block.alias('aer_tracker_log')
     Block.config('file')
     Block.output('track')
@@ -33,10 +32,10 @@ class AERLogReader(TextLog):
             
             return t, [(0, res)]
 
-@simple_block
-def tracks_quality(tracks):
-    q = [tracks[x]['quality'] for x in sorted(tracks.keys())]
-    return np.array(q)
+# @simple_block
+# def tracks_quality(tracks):
+#    q = [tracks[x]['quality'] for x in sorted(tracks.keys())]
+#    return np.array(q)
 
 
 

@@ -28,7 +28,7 @@ hist_neg -> |scale max_color=[0,0,1]| -> |resize width=256| -> \
 rgb_all, rgb_pos, rgb_neg  -> |sync| -> |grid cols=3| -> rgb
 
 
-rgb -> |info|
+# rgb -> |info|
 
 rgb -> |mencoder file="${filename}-${interval}.mp4"|
 

@@ -26,7 +26,6 @@ class MaxVelMotion(MotionModel):
         p_state = self.probability_state(tracks)
         return p_motion * p_state
     
-    
     def probability_state(self, tracks):
         """ Checks that the distance is not too small """
         def probability2(t1, t2):

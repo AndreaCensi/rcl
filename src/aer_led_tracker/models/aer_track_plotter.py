@@ -1,6 +1,7 @@
 from procgraph import Block
 from procgraph_mpl.plot_generic import PlotGeneric
 from aer_led_tracker.models import aer_color_sequence
+from aer_led_tracker.models.utils import set_viewport_style
 
 
 class AERTrackPlotter(Block):
@@ -26,6 +27,7 @@ class AERTrackPlotter(Block):
         T = self.get_input_timestamp(0)
         title = 'T = %.1f ms' % (T * 1000)
         pylab.title(title)
+        set_viewport_style(pylab)
 
 
 def plot_tracks(pylab, tracks, base_markersize=5, marker='s'):

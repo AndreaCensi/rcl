@@ -1,7 +1,7 @@
+from .utils import aer_color_sequence
 from procgraph import Block
 from procgraph_mpl.plot_generic import PlotGeneric
 import numpy as np
-from aer_led_tracker.models import aer_color_sequence
 
 
 class AERqualityPlotter(Block):

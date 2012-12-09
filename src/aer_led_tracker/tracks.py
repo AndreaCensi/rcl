@@ -1,14 +1,6 @@
 import numpy as np
-from contracts import contract, new_contract
-from aer_led_tracker.logio import aer_track_dtype
-
-@new_contract
-def track_dtype(x):
-    if not x.dtype == aer_track_dtype:
-        msg = 'Invalid dtype: %r' % x.dtype
-        raise ValueError(msg)
-
-new_contract('tracks_array', 'array[>=1],track_dtype')
+from contracts import contract
+from aer_led_tracker.utils.vectors import vector_norm
 
 # @contract(tracks='tracks_array')
 def enumerate_id_track(tracks):
@@ -16,9 +8,6 @@ def enumerate_id_track(tracks):
     for id_track in id_tracks:
         sel = tracks['id_track'] == id_track
         yield id_track, tracks[sel]
-
-def vector_norm(x):
-    return np.linalg.norm(x, 2)
 
 @contract(tracks='tracks_array')
 def assert_only_one_id(tracks):

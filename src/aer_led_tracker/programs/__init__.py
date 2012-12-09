@@ -1,2 +1,2 @@
-from .resolver_plot import *
 from .particles_plot import *
+from .tracker_plot import *

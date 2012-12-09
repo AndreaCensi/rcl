@@ -1,4 +1,4 @@
-from aer_led_tracker.resolver import Resolver, alternatives_print
+# from aer_led_tracker.resolver import Resolver, alternatives_print
 from procgraph import Block
 from aer_led_tracker.motion import MaxVelMotion
 

@@ -33,6 +33,7 @@ class AERAltPlotter(Block):
             marker = markers[i % len(markers)]
             plot_tracks(pylab, tracks, base_markersize=10, marker=marker)
             pylab.text(10, 10, quality)
+            
 
 def get_last(subset):
     tracks = {}
