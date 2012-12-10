@@ -2,6 +2,7 @@ from aer.programs.blink_detect.mhdetector import MHDetectorLog
 from quickapp import QuickApp
 import os
 import sys
+from aer_led_tracker.programs.tracker_plot import aer_tracker_plot
  
 
 class AERBlinkDetect(QuickApp):
@@ -13,7 +14,6 @@ class AERBlinkDetect(QuickApp):
         params.add_int("npeaks", default=3)
         params.add_float("min_led_distance", default=5,
                          help='Minimum distance between LEDs')
-#        params.add_float("weight_others", default=0)         
         params.add_int("pd", default=100, help="phase discretization")
         params.add_flag("video")
         params.add_string("suffix", compulsory=True)
@@ -44,16 +44,13 @@ class AERBlinkDetect(QuickApp):
     
         #   if options.video2: #XXX
         if True: 
-            from aer_led_tracker.programs.plot.meat import aer_tracker_plot
             self.comp(aer_tracker_plot, tracks=tracks_filename,
                       width=options.video2_width,
                       extra_dep=[md])       
         
 
 def aer_blink_detect(**kwargs):
-    
     md = MHDetectorLog(**kwargs)
-    
     md.go()
            
  

@@ -1,38 +1,39 @@
-from aer_led_tracker.utils.vectors import vector_distance
-from aer_led_tracker.types import aer_particle
+import numpy as np
+from contracts import new_contract, contract
 
 
-def particle_dist(p2, p1):
-    return vector_distance(p2['coords'], p1['coords'])
+# These are the particles
 
-def particle_is_compatible(p, coords):
-    """ Returns true if the observation at coords are compatible. """
-    dist = vector_distance(p['coords'], coords)
-    compatible = dist < p['bound']
-    return compatible 
-    
+aer_particle_dtype = np.dtype([
+    ('timestamp', 'float'),
+    ('id_track', 'S32'),
+    ('coords', 'float', 2),
+    ('score', 'float'),
+    ('bound', 'float'),
+])
 
-def particle_merge(p, coords, coords_score):
-    """ Merge the observations """
-    assert p.shape == ()
-    pos1 = p['coords']
-    pos2 = coords
-    alpha1 = 1.0 / p['bound']
-    alpha2 = 1.0 
-    pos = (pos1 * alpha1 + pos2 * alpha2) / (alpha1 + alpha2)
-    
-    bound2 = 1.0 / (alpha1 + alpha2)
-    score = p['score'] * coords_score
-    timestamp = p['timestamp'].item()
-    id_track = p['id_track'].item()
-    return aer_particle(timestamp=timestamp, id_track=id_track,
-                        score=score, coords=pos, bound=bound2)
-        
-def particle_evolve_up_to(p, max_vel, timestamp):
-    delta = timestamp - p['timestamp']
-    assert delta >= 0
-    q = p.copy()
-    q['timestamp'] = timestamp
-    q['bound'] += max_vel * delta
-    return q
-    
+
+@contract(timestamp='float', id_track='str', coords='seq[2](number)',
+          score='>0', bound='>0')
+def aer_particle(timestamp, id_track, coords, score, bound):     
+    """ Creates a particle """
+    p = np.zeros(shape=(), dtype=aer_particle_dtype)
+    p['timestamp'] = timestamp
+    p['id_track'] = id_track
+    p['coords'][0] = coords[0]
+    p['coords'][1] = coords[1]
+    p['score'] = score
+    p['bound'] = bound
+    return p
+
+
+@new_contract
+def is_particle_dtype(x):
+    if not x.dtype == aer_particle_dtype:
+        msg = 'Invalid dtype: %r' % x.dtype
+        raise ValueError(msg)
+
+new_contract('particles_array', 'array[>=1],is_particle_dtype')
+
+
+

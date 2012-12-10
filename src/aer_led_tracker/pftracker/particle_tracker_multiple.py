@@ -1,6 +1,5 @@
-from . import compute_alternatives, np, contract, ParticleTracker
-from .. import aer_particle_dtype
-from aer_led_tracker.pftracker.particles import particle_dist
+from . import (aer_particle_dtype, compute_alternatives, np, contract,
+    ParticleTracker, particle_dist)
 import itertools
 
 
@@ -28,6 +27,7 @@ class ParticleTrackerMultiple():
         # update up to a given time
         for p in self.pfs.values():
             p.evolve_up_to(timestamp)
+            p.remove_too_large()
         
     @contract(returns='particles_array')
     def get_all_particles(self):

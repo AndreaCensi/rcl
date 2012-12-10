@@ -1,5 +1,6 @@
 from procgraph import Block
-
+from aer_led_tracker.tracks import aer_track_dtype
+import numpy as np
 
 class Smoother(object):
     """ Smooths different tracks"""
@@ -16,8 +17,12 @@ class Smoother(object):
         return len(self.last) >= self.num
 
     def get_values(self):
-        return dict(**self.last)
-    
+        values = []
+        for x in self.last.values():
+            values.extend(x)
+        x = np.asarray(values, dtype=aer_track_dtype)
+        return x
+
     
 class AERSmoother(Block):
     Block.alias('aer_smoother')

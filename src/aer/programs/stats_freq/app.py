@@ -6,7 +6,7 @@ class AERStatsFreqApp(QuickApp):
     
     def define_options(self, params):
         params.add_string("log", help='source file', compulsory=True)    
-        params.add_string("pipeline", help='p2n,n2p,both', compulsory=True)    
+        params.add_string("pipeline", help='p2n,n2p,both', default='both')    
                             
     def define_jobs(self):
         options = self.get_options()

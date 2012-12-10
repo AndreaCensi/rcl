@@ -1,7 +1,8 @@
+from aer_led_tracker.models.utils import set_viewport_style, get_track_colors
+from aer_led_tracker.tracks import enumerate_id_track
 from procgraph import Block
 from procgraph_mpl.plot_generic import PlotGeneric
-from aer_led_tracker.models import aer_color_sequence
-from aer_led_tracker.models.utils import set_viewport_style
+import numpy as np
 
 
 class AERTrackPlotter(Block):
@@ -21,31 +22,26 @@ class AERTrackPlotter(Block):
         
     def plot(self, pylab):
         tracks = self.input.tracks
-    
-        plot_tracks(pylab, tracks, base_markersize=5)
+        
+        plot_tracks(pylab, tracks, base_markersize=10, alpha=0.5)
 
         T = self.get_input_timestamp(0)
-        title = 'T = %.1f ms' % (T * 1000)
-        pylab.title(title)
+        pylab.title('Raw detections')
+        time = 'T = %.1f ms' % (T * 1000)
+        pylab.text(3, 3, time)
         set_viewport_style(pylab)
 
 
-def plot_tracks(pylab, tracks, base_markersize=5, marker='s'):
-    label2c = {}
-    labels = sorted(tracks.keys(), key=int)
-    for i, label in enumerate(labels):
-        label2c[label] = aer_color_sequence[i]
-        
-    for i in range(len(labels)):
-        id_track = labels[i]
-        for t in tracks[id_track]: 
+def plot_tracks(pylab, tracks, base_markersize=5, marker='s', alpha=1):
+    assert isinstance(tracks, np.ndarray)
+    
+    t2c = get_track_colors(tracks)
+    for id_track, its_data in enumerate_id_track(tracks):
+        for t in its_data: 
             x = t['i']
-            y = t['j']
-            # pylab.text(x, y + 15, id_track)
-            
+            y = t['j']            
             # r = 1 is best, r =0 is worst
             r = (t['npeaks'] - t['peak']) * 1.0 / t['npeaks']
             markersize = base_markersize * (r / 2 + 0.5) 
-            pylab.plot(x, y, color=label2c[id_track], marker=marker,
-                       markersize=markersize)
-            pylab.axis((0, 128, 0, 128))
+            pylab.plot(x, y, color=t2c[id_track], marker=marker,
+                       markersize=markersize, alpha=alpha)

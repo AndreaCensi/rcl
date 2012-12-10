@@ -1,36 +1,144 @@
 --- model aer_particles_plot
+config tracks
 config log
+config width = 200
 
-config width = 256
+import procgraph_aer
  
-|aer_tracker_log file=$log| --> raw_tracks --> |aer_smoother ntracks=4| --> tracks
+|aer_tracker_log file=$tracks| --> tracks 
 
+tracks -> |pd:aer_pf| -> particles, alternatives 
+ 
+pd.max_hp = 5
+pd.max_bound = 30
+pd.max_vel = 300
+pd.min_track_dist = 15
+
+|aer_events_plot_sub log=$log width=$width| -> rgb_events
+
+    tracks -> |aer_track_plot_sub     width=$width| -> rgb_tracks 
+   particles -> |aer_particles_plot_sub width=$width| -> rgb_particles
+alternatives -> |aer_hps_plot_sub       width=$width| -> rgb_alternatives
+
+rgb_events -> |info|
+rgb_events, rgb_tracks, rgb_particles, rgb_alternatives  -> \
+	|sync|->|grid cols=2 bgcolor=[1,1,1]|->rgb
+
+#rgb -> |imwrite file="${tracks}-parplot.frame.png"|
+rgb -> |mencoder file="${tracks}-parplot.mp4" fps=30 timestamps=0|
+
+--- model aer_track_plot_sub
+config width
+input tracks
+output rgb
+
+|input name=tracks| -> raw_tracks
+
+ raw_tracks --> |aer_smoother ntracks=4| --> tracks
+ 
 tracks -> |aer_track_plotter   width=$width| -> rgb_track
 tracks -> |aer_quality_plotter width=$width| -> rgb_quality
 
-raw_tracks -> |pd:aer_pf| -> particles, alternatives 
+rgb_track, rgb_quality  -> |sync| -> |grid cols=2| -> rgb
+
+rgb -> |l:aer_particles_plot_label| -> |output name=rgb|
+
+l.title = 'Step #1: Raw detection'
+
+--- model aer_particles_plot_sub
+config width
+input particles
+output rgb
+
+|input name=particles| -> particles
+
+particles -> |aer_pf_plot width=$width| -> rgb_pf
+particles -> |aer_pf_quality_plot width=$width| -> rgb_pf_q
+
+rgb_pf, rgb_pf_q -> |sync| -> |grid cols=2| -> rgb
  
-pd.max_hp = 5
-pd.max_bound = 25
-pd.max_vel = 500
-pd.min_track_dist = 15
+rgb -> |l:aer_particles_plot_label| -> |output name=rgb|
 
-particles -> |aer_pf_plot| -> rgb_pf
-particles -> |aer_pf_quality_plot| -> rgb_pf_q
+l.title = 'Step #2: Tracking particles'
 
 
-alternatives -> |slice start=0 end=0| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved1
-alternatives -> |slice start=1 end=1| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved2
-alternatives -> |slice start=2 end=2| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved3
-alternatives -> |slice start=3 end=3| -> |aer_pf_hp_plotter width=$width| -> rgb_resolved4
+--- model aer_hps_plot_sub
+config width
+input alternatives
+output rgb
 
-rgb_resolved1, rgb_resolved2, rgb_resolved3, rgb_resolved4  -> \
-	|sync|->|grid cols=4|->rgb_bottom
+|input name=alternatives| -> alts
+alts -> |slice start=0 end=0| -> |a1:aer_pf_hp_plotter width=$width| -> rgb1
+alts -> |slice start=1 end=4| -> |a2:aer_pf_hp_plotter width=$width| -> rgb2
 
-rgb_track, rgb_quality, rgb_pf, rgb_pf_q -> |sync| -> |grid cols=4| -> rgb_top
+a1.title = 'Most likely hypothesis'
+a2.title = 'Hypotheses #2--4'
 
-rgb_top, rgb_bottom -> |sync| -> |grid cols=1| -> rgb
+rgb1, rgb2 -> |sync| -> |grid cols=2| -> rgb
+ 
+rgb -> |l:aer_particles_plot_label| -> |output name=rgb|
+
+l.title = 'Step #3: Selecting hypotheses'
 
 
-rgb -> |imwrite file="${log}-parplot.frame.png"|
-rgb -> |mencoder file="${log}-parplot.mp4" fps=30|
+--- model aer_events_plot_sub
+config log
+config interval = 0.001
+config width 
+output rgb
+import procgraph_aer
+
+|aer_raw_stream filename=$log| -> |aer_transpose| -> events
+
+events -> |time_slice interval=$interval| -> |list2array| -> last_events
+
+last_events -> |aer_filter_pos| -> |aer_events_hist| -> hist_pos
+last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
+
+hist_pos -> |scale max_color=[1,0,0]| -> |resize width=$width| -> |border width=1| -> rgb_pos
+hist_neg -> |scale max_color=[0,0,1]| -> |resize width=$width| -> |border width=1| -> rgb_neg
+
+rgb_pos, rgb_neg  -> |grid cols=2 pad=5 bgcolor=[1,1,1]| -> rgb
+
+#last_events -> |aer_events_hist| -> hist_all
+#last_events -> |aer_events_hist_sign| -> hist_sign
+#rgb_all, rgb_sign -> |grid cols=2| -> rgb
+#hist_all -> |scale| -> |resize width=$width| -> \
+#	|aer_image_label1 title ='all events'| -> rgb_all
+
+#hist_sign -> |posneg skim=1| -> |resize width=$width| -> \
+#	|aer_image_label1 title='both'| -> rgb_sign
+
+#rgb_all, rgb_sign -> |grid cols=2| -> rgb
+
+rgb -> |l:aer_particles_plot_label| -> |output name=rgb|
+l.title = 'Positive/negative events'
+
+
+--- model aer_particles_plot_label
+""" Puts a border and a label around an image (smaller) """
+config title
+input rgb 
+output out "Image with border and label"
+config bgcolor = [0.85,0.85,0.85]
+config size = 29
+config font = 'Candara'
+config color = black
+config bg =  lightgray
+
+|input name=rgb| --> |border1:border| --> |text| --> |border2:border| -> |output name=out|
+
+border1.left = 10
+border1.right = 10
+border1.top = 45
+border1.bottom = 10
+border1.color = $bgcolor
+border2.left = 5
+border2.right = 5
+border2.top = 5
+border2.bottom = 5
+border2.color = [1,1,1]
+
+text.texts = [{string:$title, valign: top, halign: center, font: $font, size: $size, color: $color, bg: $bg, position: [5, center]} ]
+
+

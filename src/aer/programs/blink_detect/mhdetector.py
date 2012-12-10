@@ -6,10 +6,12 @@ from aer.programs.blink_detect.fixed_freq_tracker import TrackerFixedFreq
 from aer.programs.blink_detect.rcl_detect_meat import (centroid_estimate2,
     remove_occupied)
 from aer.utils import md_argmax
-from aer_led_tracker.logio import AERTrackLogWriter, create_track_observation
+from aer_led_tracker.logio import AERTrackLogWriter
+from aer_led_tracker.tracks import create_track_observation
 from contracts import contract
 from scipy.ndimage.filters import gaussian_filter
 import itertools
+import numpy as np
  
     
 class MHDetectorLog(object):
@@ -138,7 +140,6 @@ def peak_detect_multiple(accum, min_distance, centroid_area,
         
     return hp
 
-import numpy as np
 
 def check_minimum_distance(hps, min_distance):
     """ Checks that the minimum distance is respected """

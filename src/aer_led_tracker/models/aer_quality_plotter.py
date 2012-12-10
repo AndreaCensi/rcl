@@ -1,4 +1,5 @@
-from .utils import aer_color_sequence
+from aer_led_tracker.models.utils import get_track_colors
+from aer_led_tracker.tracks import enumerate_id_track
 from procgraph import Block
 from procgraph_mpl.plot_generic import PlotGeneric
 import numpy as np
@@ -22,34 +23,25 @@ class AERqualityPlotter(Block):
         
     def plot(self, pylab):
         tracks = self.input.tracks
-
-        x = []
-        q = []
-        c = []
+        assert isinstance(tracks, np.ndarray)
         
-        cmax_q = 0
-        labels = sorted(tracks.keys(), key=int)
-        for i, label in enumerate(labels):
-            choices = tracks[label]
-            x.append(i)
-            c.append(aer_color_sequence[i])
-            qualities = choices['quality']
-            q.append(qualities)
-            cmax_q = max(cmax_q, np.max(qualities))
-        
-        for i in range(len(x)):
-            for j, qq in enumerate(q[i]):
-                xj = x[i] + 0.1 * j
-                pylab.plot([xj, xj], [0, qq], '%s-' % c[i])
+        t2c = get_track_colors(tracks)
+        x_ticks = []
+        x_label = []
+        for i, xx in enumerate(enumerate_id_track(tracks)):
+            id_track, its_data = xx
+            x_ticks.append(i)
+            x_label.append(id_track)
+            quality = its_data['quality']
+            for j, qq in enumerate(quality):
+                xj = i + 0.16 * (j + 1 - len(quality) / 2.0)
+                pylab.plot([xj, xj], [0, qq], '%s-' % t2c[id_track], linewidth=2)
                 
-        self.max_q = max(self.max_q, cmax_q)
+        self.max_q = max(self.max_q, np.max(tracks['quality']))
     
-        pylab.axis((-1, len(x), 0, self.max_q))
-        pylab.xticks(x, labels)
-        pylab.title('quality')
+        M = 0.1
+        pylab.axis((-1, len(x_ticks), -M * self.max_q, self.max_q * (1 + M)))
+        pylab.xticks(x_ticks, x_label)
+        pylab.title('Detection quality') 
         
-#        
-#        T = self.get_input_timestamp(0)
-#        title = 'T = %.1f ms' % (T * 1000)
-#        pylab.title(title)
-
+        

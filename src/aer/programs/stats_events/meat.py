@@ -4,6 +4,7 @@ from aer.logs import aer_load_log_generic
 from aer.stats import aer_histogram
 from aer.utils import md_argmax
 from reprep import Report, scale
+from aer.logs.load_aer_logs import aer_raw_events_from_file_all
 
 def get_for_one(events, coords): 
     for_one = np.logical_and(events['x'] == coords[0],
@@ -57,7 +58,8 @@ def report_for_one(r, events, coords):
     
 
 def aer_stats_events_meat(log):
-    events = collect_all(aer_load_log_generic(log))
+#    events = collect_all(aer_load_log_generic(log))
+    events = aer_raw_events_from_file_all(log)
     hist = aer_histogram(events)
     _, coords = md_argmax(hist)
 

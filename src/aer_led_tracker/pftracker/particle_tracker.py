@@ -1,7 +1,6 @@
-from . import contract, np
-from aer_led_tracker.pftracker.particles import (particle_dist,
-    particle_is_compatible, particle_merge, particle_evolve_up_to)
-from aer_led_tracker.types import aer_particle
+from . import (particle_dist, particle_is_compatible, particle_merge,
+    particle_evolve_up_to, contract, np, aer_particle)
+
 
 class ParticleTracker():
     """ A class that tracks a set of particles for one frequency. """
@@ -91,7 +90,4 @@ def track2particle(t):
                      coords=[t['i'], t['j']],
                      score=t['quality'],
                      bound=2)  # XXX
-    return p
-
-    
-    
+    return p    

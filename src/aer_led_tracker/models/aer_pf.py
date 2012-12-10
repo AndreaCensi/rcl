@@ -67,6 +67,7 @@ class AERPFPlotter(Block):
             plot_particles(pylab, particles, color)
             
         set_viewport_style(pylab)
+        pylab.title('Particles')
 
 
 def plot_particles(pylab, particles, color):
@@ -80,7 +81,6 @@ def plot_particles(pylab, particles, color):
         radius = particle['bound']
         cir = pylab.Circle((x, y), radius=radius,
                            fc=color, edgecolor='none')
-#        alpha = lprob[i] * 0.5 + 0.5
         cir.set_alpha(alpha[i])
         cir.set_edgecolor('none')
         pylab.gca().add_patch(cir)
@@ -98,6 +98,8 @@ class AERPFQualityPlotter(Block):
                                         transparent=False,
                                         tight=False)
         
+        self.min_score = None  
+        self.max_score = None
         
     def update(self):
         self.output.rgb = self.plot_generic.get_rgb(self.plot)
@@ -110,17 +112,36 @@ class AERPFQualityPlotter(Block):
             bound = particles['bound']
             score = particles['score']
             pylab.scatter(bound, np.log(score), marker='s', color=color)
+        
+        min_score = np.min(particles['score'])
+        max_score = np.max(particles['score'])
+        
+        if self.min_score is None:
+            self.min_score = min_score
+            self.max_score = max_score
             
+        self.min_score = min(self.min_score, min_score)
+        self.max_score = min(self.max_score, max_score)
+             
         a = pylab.axis()
-        pylab.axis((-1, 30, a[2], a[3]))
-        pylab.xlabel('bound (pixel)')
+#        pylab.axis((-1, 30, a[2], a[3]))
+        M = 0.1
+        y0 = np.log(self.min_score)
+        y1 = np.log(self.max_score)
+        delta = y1 - y0
+        y0 -= M * delta
+        y1 += M * delta
+        
+        pylab.axis((-1, 30, y0, y1))
+        pylab.xlabel('spatial uncertainty (pixels)')
         pylab.ylabel('score')
-         
+        pylab.title('Particles statistics')
 
 
 class AERPFHPPlotter(Block):
     Block.alias('aer_pf_hp_plotter')
     Block.config('width', 'Image dimension', default=128)
+    Block.config('title', default=None)
     Block.input('alts')
     Block.output('rgb')
     
@@ -141,9 +162,16 @@ class AERPFHPPlotter(Block):
         for i, alt in enumerate(alts):    
             marker = markers[i % len(markers)]
             self.plot_hp(pylab, alt, marker)
-            pylab.text(3, 3, 'score: %g' % alt.score)
+        
+        # only draw if small...
+        if len(alts) <= 2:
+            scores = ",".join(['%g' % x.score for x  in alts])
+            pylab.text(3, 3, 'score: %s' % scores)
         set_viewport_style(pylab)
-    
+        title = self.config.title
+        if title is not None:
+            pylab.title(title) 
+
     def plot_hp(self, pylab, alt, marker):
         particles = alt.subset
         track2color = get_track_colors(particles)  
