@@ -121,7 +121,7 @@ config title
 input rgb 
 output out "Image with border and label"
 config bgcolor = [0.85,0.85,0.85]
-config size = 29
+config size = 22
 config font = 'Candara'
 config color = black
 config bg =  lightgray
@@ -130,7 +130,7 @@ config bg =  lightgray
 
 border1.left = 10
 border1.right = 10
-border1.top = 45
+border1.top = 40
 border1.bottom = 10
 border1.color = $bgcolor
 border2.left = 5

@@ -7,7 +7,7 @@ class AERParticlesPlotApp(QuickApp):
     
     def define_options(self, params):
         params.add_string("tracks", help='source file', compulsory=True)    
-        params.add_int("width", default=int(128 * 2.5))    
+        params.add_int("width", default=int(128 * 2.3))    
                             
     def define_jobs(self):
         options = self.get_options()
@@ -34,7 +34,8 @@ def find_log_for_tracks(tracks):
         print('trying %s' % f)
         if os.path.exists(f):
             return f
-    print('Could not find log for %r' % tracks)
+    msg = ('Could not find raw event log for tracks %r' % tracks)
+    raise ValueError(msg)
     return None
         
         
