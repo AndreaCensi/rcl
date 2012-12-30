@@ -123,7 +123,7 @@ class AERPFQualityPlotter(Block):
         self.min_score = min(self.min_score, min_score)
         self.max_score = min(self.max_score, max_score)
              
-        a = pylab.axis()
+#        a = pylab.axis()
 #        pylab.axis((-1, 30, a[2], a[3]))
         M = 0.1
         y0 = np.log(self.min_score)

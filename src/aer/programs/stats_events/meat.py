@@ -1,6 +1,4 @@
 from . import np
-from aer.filters import collect_all
-from aer.logs import aer_load_log_generic
 from aer.stats import aer_histogram
 from aer.utils import md_argmax
 from reprep import Report, scale

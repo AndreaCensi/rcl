@@ -25,7 +25,7 @@ rgb_events, rgb_tracks, rgb_particles, rgb_alternatives  -> \
 	|sync|->|grid cols=2 bgcolor=[1,1,1]|->rgb
 
 #rgb -> |imwrite file="${tracks}-parplot.frame.png"|
-rgb -> |mencoder file="${tracks}-parplot.mp4" fps=30 timestamps=0|
+rgb -> |mencoder file="${tracks}-parplot.mp4" fps=25 vbitrate=10000000 timestamps=0|
 
 --- model aer_track_plot_sub
 config width
@@ -92,13 +92,20 @@ import procgraph_aer
 
 events -> |time_slice interval=$interval| -> |list2array| -> last_events
 
-last_events -> |aer_filter_pos| -> |aer_events_hist| -> hist_pos
-last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
+last_events -> |aer_events_hist_fancy| -> hist2 
 
-hist_pos -> |scale max_color=[1,0,0]| -> |resize width=$width| -> |border width=1| -> rgb_pos
-hist_neg -> |scale max_color=[0,0,1]| -> |resize width=$width| -> |border width=1| -> rgb_neg
+#last_events -> |aer_filter_pos| -> |aer_events_hist| -> hist_pos
+#last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
 
-rgb_pos, rgb_neg  -> |grid cols=2 pad=5 bgcolor=[1,1,1]| -> rgb
+#hist_pos -> |scale max_color=[1,0,0]| -> |resize width=$width| -> |border width=1| -> rgb_pos
+#hist_neg -> |scale max_color=[0,0,1]| -> |resize width=$width| -> |border width=1| -> rgb_neg
+
+last_events -> |aer_events_hist| -> hist_all
+hist_all -> |scale| -> |resize width=$width|-> |border width=1| -> rgb1
+hist2    -> |posneg skim=0.1| -> |resize width=$width| -> |border width=1|-> rgb2
+
+rgb1, rgb2  -> |sync| -> |grid cols=2 pad=5 bgcolor=[1,1,1]| -> rgb
+
 
 #last_events -> |aer_events_hist| -> hist_all
 #last_events -> |aer_events_hist_sign| -> hist_sign
@@ -112,7 +119,7 @@ rgb_pos, rgb_neg  -> |grid cols=2 pad=5 bgcolor=[1,1,1]| -> rgb
 #rgb_all, rgb_sign -> |grid cols=2| -> rgb
 
 rgb -> |l:aer_particles_plot_label| -> |output name=rgb|
-l.title = 'Positive/negative events'
+l.title = 'Observed events'
 
 
 --- model aer_particles_plot_label

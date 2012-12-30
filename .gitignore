@@ -21,3 +21,5 @@ data
 data1
 data2
 data3
+*.aedat
+*-active.avi
