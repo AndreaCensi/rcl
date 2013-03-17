@@ -92,7 +92,6 @@ figs-within-sections
 
 \begin_body
 
-
 \begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand input
@@ -103,6 +102,25 @@ filename "rclnotes_sec1_intro.lyx"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "rclnotes_sec2_models.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "rclnotes_sec90_biblio.lyx"
+
+\end_inset
+
+
+\end_layout
 
 \end_body
 \end_document
