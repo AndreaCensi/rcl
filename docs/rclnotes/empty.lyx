@@ -4,20 +4,16 @@
 \begin_header
 \textclass IEEEtran
 \begin_preamble
+
 \input{tex/preamble.tex}
 \end_preamble
 \use_default_options true
-\begin_modules
-theorems-ams
-eqs-within-sections
-figs-within-sections
-\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman palatino
+\font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
@@ -35,6 +31,10 @@ figs-within-sections
 \paperfontsize default
 \spacing single
 \use_hyperref false
+\pdf_title "Bootstrapping bilinear gradient dynamics sensor models"
+\pdf_author "Andrea Censi, Richard M. Murray"
+\pdf_subject "robotics"
+\pdf_keywords "robotics bootstrapping learning "
 \pdf_bookmarks true
 \pdf_bookmarksnumbered false
 \pdf_bookmarksopen false
@@ -54,23 +54,8 @@ figs-within-sections
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
-\suppress_date true
+\suppress_date false
 \use_refstyle 0
-\branch report
-\selected 0
-\filename_suffix 0
-\color #000000
-\end_branch
-\branch conf
-\selected 0
-\filename_suffix 0
-\color #000000
-\end_branch
-\branch AC
-\selected 1
-\filename_suffix 0
-\color #682743
-\end_branch
 \index Index
 \shortcut idx
 \color #008000
@@ -93,52 +78,6 @@ figs-within-sections
 \begin_body
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "rclnotes_sec1_intro.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "rclnotes_sec2_models.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "rclnotes_sec8_experiments.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "rclnotes_sec9_conclusions.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "rclnotes_sec90_biblio.lyx"
-
-\end_inset
-
 
 \end_layout
 

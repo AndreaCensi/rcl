@@ -93,7 +93,11 @@ figs-within-sections
 \begin_body
 
 \begin_layout Title
-Low-latency localization by tracking LEDs markers
+Low-latency localization by Active LEDs Markers tracking
+\end_layout
+
+\begin_layout Author
+Andrea Censi, Jonas Strubel, Christian Braend, Tobi Delbruck, Davide Scaramuzza
 \end_layout
 
 \begin_layout Abstract
@@ -170,12 +174,105 @@ key "oster08quantification"
 
 \end_layout
 
+\begin_layout Itemize
+The main disadvantages are:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+prototype status
+\end_layout
+
+\begin_layout Itemize
+heavy
+\end_layout
+
+\begin_layout Itemize
+low-resolution
+\end_layout
+
+\begin_layout Itemize
+buffer, too many events
+\end_layout
+
+\begin_layout Itemize
+complicated to tune
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Future improvements:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+more resolution
+\end_layout
+
+\begin_layout Itemize
+inclusion of a 
+\begin_inset Quotes eld
+\end_inset
+
+normal
+\begin_inset Quotes erd
+\end_inset
+
+ RGB camera
+\end_layout
+
+\begin_layout Itemize
+miniaturization
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Paper outline 
 \end_layout
 
+\begin_layout Itemize
+Section 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+xxx
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Software and datasets are available at 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+xxx
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Hardware setup and event data
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Hardware-setup-and"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -183,7 +280,7 @@ This section describes the basic hardware setup and how the data looks like.
 \end_layout
 
 \begin_layout Subsection
-Hardware
+Active LED Markers (ALMs)
 \end_layout
 
 \begin_layout Itemize
@@ -454,16 +551,8 @@ Estimation
 3D Reconstruction
 \end_layout
 
-\begin_layout Section
-Evaluation
-\end_layout
+\begin_layout Subsubsection
 
-\begin_layout Section
-Conclusions
-\end_layout
-
-\begin_layout Itemize
-other factors that impact this
 \end_layout
 
 \end_body

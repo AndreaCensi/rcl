@@ -5,13 +5,13 @@
 % add [table] to allow \rowcolor
 \usepackage[table]{xcolor} 
 
-% \input{tex/thanks.tex}
+\input{tex/thanks.tex}
  
  % on page \pageref{#1}} 10 \newrefformat{fig}{Figure \ref{#1} on page \pageref{#1}}
 
 
 %%% Biblatex
-\usepackage[style=numeric-comp,sorting=none,firstinits=true, maxnames=10, bibstyle=numeric-urls-expdoi,abbreviate=true,defernums=true,eprint=false,backend=bibtex]{biblatex}
+\usepackage[style=numeric-comp,sorting=none,firstinits=true, maxnames=10, bibstyle=numeric,abbreviate=true,defernums=true,eprint=false,backend=bibtex]{biblatex}
 % \usepackage[style=numeric-comp,sorting=none,firstinits=true, maxnames=10, bibstyle=numeric,abbreviate=true,defernums=true,eprint=false,backend=bibtex]{biblatex}
 \renewcommand{\bibfont}{\footnotesize}
 % Warning for bibliography
@@ -55,6 +55,9 @@
 \usepackage[caption=false,font=footnotesize]{subfig}
 \captionsetup[subtable]{font={rm,md,sc,footnotesize},position=top}
 
+
+\newcommand{\ALMs}{ALMs}
+\newcommand{\ALM}{ALM}
 
 \usepackage{graphicx}
 
