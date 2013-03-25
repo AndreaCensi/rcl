@@ -1,0 +1,326 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass IEEEtran
+\begin_preamble
+\input{tex/preamble.tex}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman palatino
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref page
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date true
+\use_refstyle 0
+\branch report
+\selected 0
+\filename_suffix 0
+\color #000000
+\end_branch
+\branch conf
+\selected 0
+\filename_suffix 0
+\color #000000
+\end_branch
+\branch AC
+\selected 1
+\filename_suffix 0
+\color #682743
+\end_branch
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 2
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Summary (1 page)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The summary (max.
+ 1 page) should characterise the application and place the planned project
+ in a wider scientific context.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The last 10 years have seen much progress in autonomous robotics.
+ The key enabler to autonomy were advances in robotic sensing hardware and
+ the corresponding new techniques for dealing with the sensors data.
+ For example, the introduction of the laser range finder as a standard robotic
+ sensor allowed for the first time to have very reliable localization and
+ mapping, through the introduction of the probabilistic/Bayesian paradigm
+ (Markov localization, particle filters, etc.).
+ Those simultaneous advances in sensors and theory enabled autonomous exploratio
+n of large scale environments and ultimately the feasibility of applications
+ such as autonomous cars.
+ Currently a large amount of research is devoted to monocular vision, which
+ will be the key technology in the next 5 years, especially for micro aerial
+ vehicles, whose limitations in payload and the outdoors operations prevent
+ using clunky and power-hungry sensors like range-finders.
+ 
+\end_layout
+
+\begin_layout Standard
+But, looking farther in the future, what will be the sensor modality of
+ the future, and what theoretical paradigm needs to change to take advantage
+ of it? Our view is that 
+\emph on
+dynamic
+\emph default
+ 
+\emph on
+sensors
+\emph default
+ in the style of the DVS camera are the most likely answer.
+ The reasoning is simple: the performance of autonomous robots, measured
+ by agility, in tasks such as exploration mainly depends on the accuracy
+ of perception.
+ In particular, in a sense-plan-act architecture what matters is the latency
+ of the pipeline.
+ The latency depends on the frequency of the sensor data, plus the time
+ it takes to process the data.
+ It is typical in current robots to have latencies of 200ms or more.
+ This puts a hard bound on the agility of the platform.
+ A DVS camera virtually eliminates the latency: data is transmitted using
+ events that have latency in the order of few microseconds.
+ However, this incremental information is completely different than the
+ data we have now from traditional sensors, so that a new paradigm is needed
+ to deal with this data.
+ Moreover, the sensors that so far have been designed for general purpose
+ use must be adapted to the case of robotics.
+\end_layout
+
+\begin_layout Standard
+This transcontinental interdisciplinary collaborative project is dedicated
+ to paving the way for widespread use of dynamic sensors in the field of
+ robotics, from both the theoretical and the practical point of view.
+ The three partners provide a unique set of competencies.
+ The Institute of Neuroinformatics (Dr.
+ Delbruck) is a leader in the design and production of neuromorphic dynamic
+ vision sensors.
+ University of Zurich (Prof.
+ Scaramuzza) is a leader in perception and control for micro-aerial vehicles,
+ which are the reference platform for the project.
+ Caltech (Dr.
+ Censi) brings the competencies for dealing with low-level sensorimotor
+ data and for designing control architectures.
+\end_layout
+
+\begin_layout Standard
+This project is particularly well suited to Sinergia because it is the only
+ institutional source of funding that allows transcontinental collaborations
+ with US partners.
+ Moreover, Prof.
+ Scaramuzza and Dr.
+ Censi are young scientists at the beginning of the research career.
+\end_layout
+
+\begin_layout Section
+Research plan
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The research plan must not exceed 10 pages and 40,000 characters (with spaces),
+ illustrations, formulae, tables and bibliographies included.
+ A minimum of point 10 font size and 1.5 line spacing must be used.
+ In general, the research plan should not contain any annexed documents.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Current state of research in the field
+\end_layout
+
+\begin_layout Standard
+Making reference to the most important publications, particularly by other
+ authors, please explain: - which previous insights provided the starting
+ point and basis for the planned studies; - in which areas research is needed,
+ and why; - which important, relevant research projects are currently underway
+ in Switzerland and abroad.
+\end_layout
+
+\begin_layout Subsection
+Current state of your own research
+\end_layout
+
+\begin_layout Standard
+For a new application, please present the research work that the various
+ (co-)applicants have already undertaken in the relevant field or in related
+ fields and mention the corresponding publications.
+\end_layout
+
+\begin_layout Subsection
+Research plan of the entire project
+\end_layout
+
+\begin_layout Standard
+Based on the information provided under 2.1 and 2.2, please indicate: - the
+ benefits expected from a co-operative approach (as a net- work); - the
+ concrete overall goals that you expect to achieve in the course of the
+ project; 2.3 - the scientific approach (combination of different methods,
+ tech- niques, etc.) to be used in addressing the overall goals of the project.
+ If the submitted project is declared as interdisciplinary, you must explain
+ on approx.
+ one page what this interdisciplinarity consists of, why it is essential
+ and how it will be taken into consideration when the research plan is implement
+ed.
+\end_layout
+
+\begin_layout Subsection
+Organization of the collaboration
+\end_layout
+
+\begin_layout Standard
+Please answer the following questions: What scientific contribution is each
+ of the sub-projects expected to make? How will the research work be structured
+ as regards content and schedule? Which specific measures will be taken
+ to enhance interaction (joint development of concept, continual exchange
+ of knowledge, etc.) and to integrate results.
+ Please specify the time and the means you will devote to this end? How
+ will the collaboration of different groups in a network promote the education
+ of young scientists (postdocs and doctoral candidates)?
+\end_layout
+
+\begin_layout Subsection
+Relevance and impact
+\end_layout
+
+\begin_layout Standard
+Please describe the impacts you expect your research in the proposed project
+ to have for the discipline and for science as a whole (research and education/t
+eaching).
+ In addition, please mention the form in which you wish to make your research
+ results public (arti- cles in science journals, monographs, conference
+ proceedings etc).
+ If applicable, please indicate whether and to what extent the proposed
+ project will have a broader impact and what this impact will be.
+\end_layout
+
+\begin_layout Section
+Subproject 1
+\end_layout
+
+\begin_layout Standard
+Please compile a research plan for each of the sub-projects involved.
+ The research plan of a sub-project must not exceed 10 pages and 40,000
+ characters (with spaces), illustrations, formulae, tables and bibliographies
+ included.
+ A minimum of point 10 font size and 1.5 line spacing must be used.
+\end_layout
+
+\begin_layout Subsection
+Interactions with the overall project
+\end_layout
+
+\begin_layout Standard
+Please explain how this sub-project is linked to the other sub- projects
+ and to the overall project.
+\end_layout
+
+\begin_layout Subsection
+Detailed research plan
+\end_layout
+
+\begin_layout Standard
+Please specify the approach you are taking and the concrete objec- tives
+ that you aim to achieve in the period of funding.
+ The following points should be addressed: - Concrete goals that you expect
+ to achieve in the course of the sub-project; - Studies or experiments needed
+ and/or envisaged to reach the set goals; - Methods by which the research
+ goals are to be reached; - Data situation / collection of data.
+ Please do not repeat information already mentioned under 2.3.
+ Item 3.3 should only contain information on a sub-project, whereas item
+ 2.3 concerns the entire project.
+\end_layout
+
+\begin_layout Subsection
+Schedule and milestones
+\end_layout
+
+\begin_layout Standard
+As far as this is possible, please compile a schedule that includes the
+ different phases of the sub-project and the most important in- 3.3 terim
+ goals.
+ This plan should also indicate the main tasks with which the persons funded
+ by the SNSF are to be entrusted (doctoral can- didates, postdocs).
+\end_layout
+
+\end_body
+\end_document

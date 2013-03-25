@@ -1,0 +1,155 @@
+% $ biblatex auxiliary file $
+% $ biblatex version 1.7 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\entry{boerlin09getting}{article}{}
+  \name{author}{3}{}{%
+    {{}%
+     {Boerlin}{B.}%
+     {M.}{M.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Delbruck}{D.}%
+     {T.}{T.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Eng}{E.}%
+     {K.}{K.}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{BMDTEK1}
+  \strng{fullhash}{BMDTEK1}
+  \verb{doi}
+  \verb 10.1162/neco.2009.06-07-554
+  \endverb
+  \field{number}{1}
+  \field{title}{Getting to know your neighbors: unsupervised learning of
+  topography from real-world, event-based input}
+  \field{volume}{21}
+  \field{journaltitle}{Neural computation}
+  \field{year}{2009}
+\endentry
+
+\entry{lichtsteiner08asynchronous}{article}{}
+  \name{author}{3}{}{%
+    {{}%
+     {Lichtsteiner}{L.}%
+     {P.}{P.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Posch}{P.}%
+     {C.}{C.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Delbruck}{D.}%
+     {T.}{T.}%
+     {}{}%
+     {}{}}%
+  }
+  \keyw{CMOS vision sensor;active continuous-time front-end logarithmic
+  photoreceptor;address-event representation;bandwidth 3 kHz;chip power
+  consumption;image sensor;latency asynchronous temporal contrast vision
+  sensor;power 23 mW;self-timed switched-capacitor differencing circuit;silicon
+  retina;size 0.35 mum;spike event;time 15 mus;CMOS image sensors;}
+  \strng{namehash}{LPPCDT1}
+  \strng{fullhash}{LPPCDT1}
+  \verb{doi}
+  \verb 10.1109/JSSC.2007.914337
+  \endverb
+  \field{number}{2}
+  \field{title}{A 128 times; 128 120 dB 15 $\mu s$ Latency Asynchronous
+  Temporal Contrast Vision Sensor}
+  \field{volume}{43}
+  \field{journaltitle}{Solid-State Circuits, IEEE Journal of}
+  \field{year}{2008}
+\endentry
+
+\entry{etienne-cummings99intelligent}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Etienne-Cummings}{E.-C.}%
+     {R}{R}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{ECR1}
+  \strng{fullhash}{ECR1}
+  \field{number}{3}
+  \field{title}{{Intelligent robot vision sensors in VLSI}}
+  \verb{url}
+  \verb http://www.springerlink.com/index/V8005M56H6204M35.pdf
+  \endverb
+  \field{volume}{7}
+  \verb{file}
+  \verb {1999_Auton_Robot_Etienne-Cummings_Intelligent_robot_vision_sensors_in_
+  \verb VLSI.pdf:/data/work/Papers2/Files/1999_Auton_Robot_Etienne-Cummings_Int
+  \verb elligent_robot_vision_sensors_in_VLSI.pdf:application/pdf}
+  \endverb
+  \field{journaltitle}{Autonomous Robots}
+  \field{year}{1999}
+\endentry
+
+\entry{oster08quantification}{article}{}
+  \name{author}{4}{}{%
+    {{}%
+     {Oster}{O.}%
+     {M}{M}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Wang}{W.}%
+     {Y}{Y}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Douglas}{D.}%
+     {R}{R}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Liu}{L.}%
+     {S~C}{S.~C.}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{OMWYDRLSC1}
+  \strng{fullhash}{OMWYDRLSC1}
+  \field{number}{10}
+  \field{title}{{Quantification of a spike-based winner-take-all VLSI network}}
+  \verb{url}
+  \verb http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=4490297
+  \endverb
+  \field{volume}{55}
+  \verb{file}
+  \verb {2008__Oster_Quantification_of_a_spike-based_winner-take-all_VLSI_netwo
+  \verb rk.pdf:/data/work/Papers2/Files/2008__Oster_Quantification_of_a_spike-b
+  \verb ased_winner-take-all_VLSI_network.pdf:application/pdf}
+  \endverb
+  \field{journaltitle}{Circuits and Systems I: Regular Papers, IEEE
+  Transactions on}
+  \field{year}{2008}
+\endentry
+
+\lossort
+\endlossort
+
+\endinput
