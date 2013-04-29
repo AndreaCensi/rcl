@@ -3,11 +3,11 @@ from setuptools import setup, find_packages
 
 version = "1.0"
 
-description = """Code for retina camera localization"""  # TODO
+description = """Tracker for DVS camera"""  # TODO
 
 long_description = description  # TODO
 
-setup(name='RCL',
+setup(name='aer_tracker',
       url='',
       description=description,
       long_description=long_description,
@@ -28,11 +28,9 @@ setup(name='RCL',
       packages=find_packages('src'),
       install_requires=[
         'ConfTools>=1.0,<2',
-        'PyVehicles',
         'PyContracts>=1.2,<2',
         'PyYAML',
         'python-cjson',
-        'PyGeometry',
         'quickapp'
       ],
       tests_require=['nose>=1.1.2,<2'],
@@ -49,9 +47,6 @@ setup(name='RCL',
             'aer_tracker_plot = aer_led_tracker.programs.plot:aer_tracker_plot_main',
             'aer_resolver_plot = aer_led_tracker.programs:aer_resolver_plot_main',
             'aer_particles_plot = aer_led_tracker.programs:aer_particles_plot_main',
-            'rcl_detect = rcl.programs.detect:rcl_detect_main',
-            'rcl_demo_vehicles = rcl.programs.rcl_demo_vehicles:main',
-            'rcl_demo_plots = rcl.programs.rcl_demo_plots:main',
         ]
       }
 )

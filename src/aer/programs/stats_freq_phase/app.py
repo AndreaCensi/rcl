@@ -14,7 +14,7 @@ class RCLFilterPhaseApp(QuickApp):
         params.add_int("n_stop", help="Number of events to consider. 0 = all",
                                 default=0)
                             
-    def define_jobs(self):
+    def define_jobs_context(self, context):
         options = self.get_options()
         stats = self.comp(filter_phase, log=options.log, pipeline=options.pipeline,
                           f_min=options.f_min,
@@ -23,7 +23,7 @@ class RCLFilterPhaseApp(QuickApp):
                           pd=options.pd,
                           n_stop=options.n_stop)
 
-        report = self.comp(filter_phase_report, stats)
+        report = context.comp(filter_phase_report, stats)
         
         self.add_report(report, 'rep1')
  

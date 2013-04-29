@@ -9,12 +9,12 @@ from procgraph import import_succesful, import_magic
 
 procgraph_info = {
     # List of python packages 
-    'requires': ['rcl']
+    'requires': ['aer']
 }
 
-rcl = import_magic(__name__, 'rcl')
+aer = import_magic(__name__, 'aer')
 
-if import_succesful(rcl):
+if import_succesful(aer):
     from .aer_raw_stream import *
     from .aer_events_hist import *
 
