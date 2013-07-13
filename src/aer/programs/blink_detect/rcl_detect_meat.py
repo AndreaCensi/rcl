@@ -4,7 +4,7 @@ from aer.filters import aer_pipeline_transitions1, aer_pipeline_transitions1_all
 from aer.utils import md_argmax
 from aer_led_tracker import AERTrackLogWriter
 from contracts import contract
-from procgraph_pil.imwrite import imwrite  # XXX
+from procgraph_pil import imwrite  # XXX
 from reprep import rgb_zoom, scale, posneg
 from scipy.ndimage import gaussian_filter
 from aer.programs.blink_detect.config import get_blink_config

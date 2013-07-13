@@ -1,5 +1,6 @@
-from . import aer_filter_pairs, np
+import numpy as np
 from aer import aer_raw_event_dtype, aer_filtered_event_dtype
+from .pairs import aer_filter_pairs
 
 __all__ = ['aer_filter_successive']
 

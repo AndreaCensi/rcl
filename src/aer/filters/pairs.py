@@ -1,4 +1,4 @@
-from . import np
+import numpy as np
 
 __all__ = ['aer_filter_pairs', 'AER_pairs']
 

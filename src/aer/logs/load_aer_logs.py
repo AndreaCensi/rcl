@@ -1,5 +1,4 @@
-from . import logger
-from aer import aer_raw_event_dtype
+from aer import aer_raw_event_dtype, logger
 from io import BufferedReader
 import io
 import numpy as np

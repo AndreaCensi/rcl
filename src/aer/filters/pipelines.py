@@ -1,11 +1,11 @@
-from . import aer_raw_relative_timestamp, logger, aer_raw_only_middle
+from . import aer_raw_relative_timestamp, aer_raw_only_middle
 from ..logs import aer_raw_events_from_file_all
+from aer import logger
 from aer.filters.transitions2 import aer_sign_transitions
 from aer.types import aer_filtered_event_dtype
 from compmake.utils import safe_pickle_dump, safe_pickle_load
 import numpy as np
 import os
-
 
 def aer_pipeline_transitions1(raw_sequence, name):
     """ Iterates over transitions events """
