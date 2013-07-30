@@ -1,4 +1,4 @@
-from . import np
+import numpy as np
 from aer.stats import aer_histogram
 from aer.utils import md_argmax
 from reprep import Report, scale

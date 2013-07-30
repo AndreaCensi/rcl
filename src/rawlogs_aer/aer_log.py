@@ -1,17 +1,25 @@
-from rawlogs import RawLog
 from .aer_signal import AERSignal
+from rawlogs.library import LogWithAnnotations
+from contracts import contract
 
 
 __all__ = ['AERLog']
 
 
-class AERLog(RawLog):    
+class AERLog(LogWithAnnotations):    
     
-    def __init__(self, filename, annotations):
+    @contract(filename='str', interval='None|>0', annotations='dict')
+    def __init__(self, filename, interval=None, annotations={}):
+        """
+            If interval is not None, the logs are read in packets of the 
+            given interval.
+        """
+        LogWithAnnotations.__init__(self, annotations)
+        
+        self.interval = interval
         self.filename = filename
         self.signal = AERSignal(self.filename)
-        self.annotations = annotations
-    
+        
     def get_signals(self):
         return dict(aer=self.signal)
 
@@ -22,9 +30,12 @@ class AERLog(RawLog):
         return [self.filename]
 
     def read(self, topics, start=None, stop=None):
-        for x in self.signal.read(topics, start, stop):
-            yield x
-                
-    def get_annotations(self):
-        return self.annotations
-    
+        if 'aer' in topics:
+            if self.interval is not None:
+                it = self.signal.read_packets(interval=self.interval, start=start, stop=stop)
+            else:
+                it = self.signal.read(start=start, stop=stop)
+            for x in it:
+                yield x
+        else:
+            print('no aer signal required in %s' % topics)

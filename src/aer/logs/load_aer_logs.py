@@ -59,6 +59,47 @@ def aer_raw_events_from_file_all(filename, limit=None):
     return e
 
 
+def aer_raw_events_from_file_all_faster(filename, limit=None):
+    """ Returns an array of raw events """
+    logger.info('Reading from %s ' % filename)
+    f, _ = read_aer_header(filename)
+
+    rest = f.read() 
+    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    nevents = data.size / 2
+    
+    if limit is not None:
+        nevents = limit
+
+    logger.info('Reading %d events...' % nevents)
+
+    e = np.zeros(shape=nevents, dtype=aer_raw_event_dtype)
+    e_x = e['x']
+    e_y = e['y']
+    e_ts = e['timestamp']
+    e_s = e['sign']
+    
+    addresses = data[::2]
+    timestamps = data[1::2]
+    
+    
+    x = (addresses & 0xFE) >> 1
+    x = 127 - x
+    y = (addresses & 0x7F00) >> 8
+    s = addresses & 1
+    
+    s[s == 0] = -1    
+
+    e_s[:] = s
+    e_x[:] = x
+    e_y[:] = y
+    e_ts[:] = timestamps * 0.000001
+    
+    logger.info('... done')
+    
+    return e
+
+
 def aer_load_from_file(filename, read_as_block=True):
     """ Yields tuples (ts_mus, x,y,s) """
     f, _ = read_aer_header(filename)
