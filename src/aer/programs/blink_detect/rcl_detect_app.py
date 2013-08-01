@@ -1,8 +1,8 @@
-from aer.programs.blink_detect.mhdetector import MHDetectorLog
+from .mhdetector import MHDetectorLog
+from aer_led_tracker.programs.tracker_plot import aer_tracker_plot
 from quickapp import QuickApp
 import os
 import sys
-from aer_led_tracker.programs.tracker_plot import aer_tracker_plot
  
 
 class AERBlinkDetect(QuickApp):

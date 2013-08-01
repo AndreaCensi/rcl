@@ -1,5 +1,6 @@
-from . import TrackerFixedFreq, logger
-from aer import aer_load_log_generic
+from .config import get_blink_config
+from .fixed_freq_tracker import TrackerFixedFreq
+from aer import aer_load_log_generic, logger
 from aer.filters import aer_pipeline_transitions1, aer_pipeline_transitions1_all
 from aer.utils import md_argmax
 from aer_led_tracker import AERTrackLogWriter
@@ -7,11 +8,12 @@ from contracts import contract
 from procgraph_pil import imwrite  # XXX
 from reprep import rgb_zoom, scale, posneg
 from scipy.ndimage import gaussian_filter
-from aer.programs.blink_detect.config import get_blink_config
-import os
-import numpy as np
 import itertools
- 
+import numpy as np
+import os
+
+
+
 class MultipleDetector(object):
     def __init__(self, log, pipeline, sigma, outdir, tracks_filename,
                interval=None,

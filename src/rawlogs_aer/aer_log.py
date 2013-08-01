@@ -38,4 +38,5 @@ class AERLog(LogWithAnnotations):
             for x in it:
                 yield x
         else:
-            print('no aer signal required in %s' % topics)
+            msg = ('No aer signal required in %s' % topics)
+            raise ValueError(msg)

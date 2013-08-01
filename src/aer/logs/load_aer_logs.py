@@ -31,7 +31,7 @@ def aer_raw_events_from_file_all(filename, limit=None):
     f, _ = read_aer_header(filename)
 
     rest = f.read() 
-    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    data = np.fromstring(rest, dtype=np.uint32).newbyteorder('>')
     nevents = data.size / 2
     
     if limit is not None:
@@ -65,7 +65,7 @@ def aer_raw_events_from_file_all_faster(filename, limit=None):
     f, _ = read_aer_header(filename)
 
     rest = f.read() 
-    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    data = np.fromstring(rest, dtype=np.uint32).newbyteorder('>')
     nevents = data.size / 2
     
     if limit is not None:
@@ -82,8 +82,7 @@ def aer_raw_events_from_file_all_faster(filename, limit=None):
     addresses = data[::2]
     timestamps = data[1::2]
     
-    
-    x = (addresses & 0xFE) >> 1
+    x = (addresses & 0x00FE) >> 1
     x = 127 - x
     y = (addresses & 0x7F00) >> 8
     s = addresses & 1
@@ -94,6 +93,13 @@ def aer_raw_events_from_file_all_faster(filename, limit=None):
     e_x[:] = x
     e_y[:] = y
     e_ts[:] = timestamps * 0.000001
+    
+    
+    assert timestamps[0] < timestamps[-1]
+    assert e_ts[0] < e_ts[-1]
+    
+    if True:
+        assert np.all(np.diff(timestamps) >= 0)
     
     logger.info('... done')
     
@@ -120,7 +126,7 @@ def read_aer_header(filename):
     
 def read_block(f):
     rest = f.read() 
-    data = np.fromstring(rest, dtype=np.int32).newbyteorder('>')
+    data = np.fromstring(rest, dtype=np.uint32).newbyteorder('>')
     nevents = data.size / 2
     for i in xrange(nevents):
         address = data[i * 2]
@@ -136,11 +142,11 @@ def read_incrementally(f):
         s = f.read(4)
         if len(s) != 4:
             break
-        address = np.fromstring(s, dtype=np.int32).newbyteorder('>')
+        address = np.fromstring(s, dtype=np.uint32).newbyteorder('>')
         x, y, s = address2xys(address)
 
         ts_str = f.read(4)          
-        ts = np.fromstring(ts_str, dtype=np.int32).newbyteorder('>')
+        ts = np.fromstring(ts_str, dtype=np.uint32).newbyteorder('>')
 
         yield ts[0], x, y, s
 
