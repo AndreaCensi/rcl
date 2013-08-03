@@ -21,7 +21,6 @@ def aer_histogram_sign(events):
 
 
 def aer_histogram_fancy(events):
-    """ Makes an  histogram of events, in which a plus counts + and a minus -. """
     ep = events[events['sign'] > 0]
     en = events[events['sign'] < 0]
     hp = aer_histogram(ep)

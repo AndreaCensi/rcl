@@ -3,6 +3,7 @@ from contracts import contract
 from numpy.testing.utils import assert_allclose
 from rawlogs import RawSignal
 import numpy as np
+from aer.logs.chunks import check_good_chunks, get_chunks_linear
 
 
 __all__ = ['AERSignal']
@@ -82,8 +83,8 @@ class AERSignal(RawSignal):
                 raise ValueError(msg)
             
         self._read_data()
-        print('reading stream %s %s' % (self.data.shape, self.data.dtype))
-        print('Start= %s; stop= %s interval= %s' % (start, stop, interval))
+#         print('reading stream %s %s' % (self.data.shape, self.data.dtype))
+#         print('Start= %s; stop= %s interval= %s' % (start, stop, interval))
 
         E = self.data
         T = E['timestamp']
@@ -94,8 +95,9 @@ class AERSignal(RawSignal):
         if T0 > T1:
             raise Exception('weird data: %s %s' % (T0, T1))
         
-        if T1 < start or T0 > stop:
+        if ((start is not None) and (T1 < start)) or ((stop is not None) and (T0 > stop)):
             # no data at all
+            print('No data at all? ')
             return
              
         if one:
@@ -104,20 +106,20 @@ class AERSignal(RawSignal):
         
         assert T0 <= T1
         
-    
-        print('T0: %s ' % T0)
-        print('T1: %s ' % T1)
-        n = int(np.ceil((T1 - T0) / interval)) 
-        if n == 0:
+        chunks = list(get_chunks_linear(T, T0, T1, interval))
+        check_good_chunks(T, T0, T1, interval, chunks)
+
+        if not chunks:
             raise Exception('weird data')
         
         npackets = 0
-        for i in range(n):
+        for i, (a, b) in enumerate(chunks):
             t0 = T[0] + i * interval
             t1 = t0 + interval
-            sel = np.logical_and(T >= t0, T < t1)
-            Es = E[sel]
-            print('t0= %s t1=%s n = %s' % (t0, t1, np.sum(sel)))
+            Es = E[a:b + 1]
+            t1 = Es['timestamp'][-1]
+            # print('t0= %s t1=%s n = %s' % (t0, t1, Es.size))
+                
             yield t1, ('aer', Es)  # RawSignalData('aer', t1, Es)
             npackets += 1
             
@@ -125,20 +127,3 @@ class AERSignal(RawSignal):
             msg = 'Probably a bug or very weird data: no packets sent?'
             raise Exception(msg)
             
-#             
-#               
-#         
-#         stop = start + 1
-#         while stop <= n - 1:
-#             delta = T[stop] - T[start]
-#             if delta > interval:
-#                 es = E[start:stop]
-#                 
-#                 start = stop
-#                 stop = start + 1 
-#             
-#             stop += 1
-
-
-    
-    

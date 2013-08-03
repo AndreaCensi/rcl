@@ -17,8 +17,10 @@ aer = import_magic(__name__, 'aer')
 if import_succesful(aer):
     from .aer_raw_stream import *
     from .aer_events_hist import *
-
+    from .aer_chunks_stream import *
 
 # load models
 from procgraph import pg_add_this_package_models
 pg_add_this_package_models(__file__, __package__)
+
+

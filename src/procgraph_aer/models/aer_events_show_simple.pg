@@ -1,0 +1,17 @@
+#!/usr/bin/env pg
+--- model aer_events_show_simple
+""" Displays the event stream """
+config filename
+config interval = 0.001 
+config width = 512
+
+import procgraph_aer
+
+|aer_chunk_stream interval=$interval filename=$filename| -> |aer_transpose| -> events
+
+events -> |aer_events_hist_sign| -> hist_sign
+
+hist_sign -> |posneg skim=0.1| -> |resize width=$width| ->  rgb_sign
+
+rgb_sign -> |mencoder fps=30 file="${filename}.show_simple-${interval}.mp4"|
+

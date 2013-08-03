@@ -5,3 +5,5 @@ from .load_txt_logs import *
 
 from .generic import *
 from .aedat_log_info import *
+
+from .chunks import *

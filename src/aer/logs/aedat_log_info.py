@@ -2,7 +2,7 @@ import os
 from aer import logger
 import yaml
 from contracts import contract
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster
+from .load_aer_logs import aer_raw_events_from_file_all_faster
 
 
 __all__ = ['aedat_info_cached', 'aedat_info']
