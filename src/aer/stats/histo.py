@@ -1,8 +1,11 @@
 import numpy as np
+from contracts import contract
 
 
+@contract(returns='array[128x128]')
 def aer_histogram(events):
-    """ Makes a simple histogram of events. 
+    """ 
+        Makes a simple histogram of events. 
     
         first index: y
         second index, x
