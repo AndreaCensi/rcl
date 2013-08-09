@@ -83,8 +83,7 @@ class AERSignal(RawSignal):
                 raise ValueError(msg)
             
         self._read_data()
-#         print('reading stream %s %s' % (self.data.shape, self.data.dtype))
-#         print('Start= %s; stop= %s interval= %s' % (start, stop, interval))
+        print('Start= %s; stop= %s interval= %s' % (start, stop, interval))
 
         E = self.data
         T = E['timestamp']
@@ -95,14 +94,23 @@ class AERSignal(RawSignal):
         if T0 > T1:
             raise Exception('weird data: %s %s' % (T0, T1))
         
-        if ((start is not None) and (T1 < start)) or ((stop is not None) and (T0 > stop)):
+        if ((start is not None) and (T1 < start)):
             # no data at all
-            print('No data at all? ')
-            return
+            msg = 'start>=T1: Start: %s Stop: %s. Log is %s - %s' % (start, stop, T0, T1)
+            raise Exception(msg)
+        if  ((stop is not None) and (T0 > stop)):
+            msg = 'stop<=T0: Start: %s Stop: %s. Log is %s - %s' % (start, stop, T0, T1)
+            raise Exception(msg)
              
-        if one:
+        if start is not None:
             T0 = max(T0, start)
+        else:
+            start = T0
+            
+        if stop is not None:
             T1 = min(T1, stop)
+        else:
+            stop = T1
         
         assert T0 <= T1
         
@@ -112,15 +120,26 @@ class AERSignal(RawSignal):
         if not chunks:
             raise Exception('weird data')
         
+        print('start: %s stop: %s' % (start, stop))
+        print('Reading %d chunks from %s to %s (log is %s to %s)' % (len(chunks), T0, T1, T[0], T[-1]))
+        
         npackets = 0
         for i, (a, b) in enumerate(chunks):
-            t0 = T[0] + i * interval
+            t0 = T0 + i * interval
             t1 = t0 + interval
+            
             Es = E[a:b + 1]
-            t1 = Es['timestamp'][-1]
-            # print('t0= %s t1=%s n = %s' % (t0, t1, Es.size))
-                
-            yield t1, ('aer', Es)  # RawSignalData('aer', t1, Es)
+            e_t0 = Es['timestamp'][0]
+            e_t1 = Es['timestamp'][-1]
+            
+            msg = ('chunk[i-1] %s chunk[i] %s chunk[i+1] %s' % (chunks[i - 1] if i > 0 else None,
+                                                                 chunks[i], chunks[i + 1] if i < len(chunks) else None)) 
+            msg += '\nstart %s t0 %s e_t0 %s e_t1 %s t1 %s stop %s' % (start, t0, e_t0, e_t1, t1, stop)
+            
+            assert t0 <= e_t0 <= e_t1 <= t1, msg
+            assert start <= e_t0 <= e_t1 <= stop, msg
+            
+            yield e_t1, ('aer', Es)  
             npackets += 1
             
         if npackets == 0:
