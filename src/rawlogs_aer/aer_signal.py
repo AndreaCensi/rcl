@@ -4,6 +4,7 @@ from numpy.testing.utils import assert_allclose
 from rawlogs import RawSignal
 import numpy as np
 from aer.logs.chunks import check_good_chunks, get_chunks_linear
+from numpy.ma.core import allclose
 
 
 __all__ = ['AERSignal']
@@ -136,8 +137,13 @@ class AERSignal(RawSignal):
                                                                  chunks[i], chunks[i + 1] if i < len(chunks) else None)) 
             msg += '\nstart %s t0 %s e_t0 %s e_t1 %s t1 %s stop %s' % (start, t0, e_t0, e_t1, t1, stop)
             
-            assert t0 <= e_t0 <= e_t1 <= t1, msg
-            assert start <= e_t0 <= e_t1 <= stop, msg
+            assert_lte(t0, e_t0, msg)
+            assert_lte(e_t0, e_t1, msg)
+            assert_lte(e_t1, t1, msg)
+            
+            assert_lte(start, e_t0, msg)
+            assert_lte(e_t0, e_t1, msg)
+            assert_lte(e_t1, stop, msg)
             
             yield e_t1, ('aer', Es)  
             npackets += 1
@@ -146,3 +152,10 @@ class AERSignal(RawSignal):
             msg = 'Probably a bug or very weird data: no packets sent?'
             raise Exception(msg)
             
+def assert_lte(a, b, msg):
+    good = allclose(a, b) or a <= b
+    if not good:
+        raise ValueError(msg + '(%s <= %s)' % (a, b))
+    
+    
+    
