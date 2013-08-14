@@ -15,3 +15,12 @@ aer_filtered_event_dtype = [
     ('delta', 'float'), ('frequency', 'float32'),
     ('valid', 'bool'), ('same', 'bool'),
 ]
+
+
+# this one has float coordinates
+aer_floatcoord_event_dtype = [
+    ('timestamp', 'float'),
+    ('x', 'float'),
+    ('y', 'float'),
+    ('sign', 'int8')
+]
