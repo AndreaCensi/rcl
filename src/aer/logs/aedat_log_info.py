@@ -24,9 +24,16 @@ def aedat_info(filename):
     return dict(duration=duration, start=start, nevents=nevents, end=end)
     
 
+class Storage:
+    cache = {}
+
+
 @contract(returns='dict')
 def aedat_info_cached(filename):
     """ Caches the result in a file <filename>.info.yaml. """
+    if filename in Storage.cache:
+        return Storage.cache[filename]
+    
     cache = filename + '.info.yaml'
     if os.path.exists(cache):
         logger.debug('Reading from cache: %s' % cache)
@@ -36,9 +43,11 @@ def aedat_info_cached(filename):
                 logger.debug('Invalid cache: %s' % cached)
                 os.unlink(cache)
                 return aedat_info_cached(filename)
+            Storage.cache[filename] = cached
             return cached
     else:
         result = aedat_info(filename)
         with open(cache, 'w') as f:
             yaml.dump(result, f)
+        Storage.cache[filename] = result
         return result
