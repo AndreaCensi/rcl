@@ -12,7 +12,7 @@ class AERRawStream(IteratorGenerator):
     
     Block.output('events', 'Event stream')
 
-    def get_iterator(self):
+    def init_iterator(self):
         filename = self.config.filename
         if not os.path.exists(filename):
             raise BadConfig(self, 'Not existent file %r.' % filename,

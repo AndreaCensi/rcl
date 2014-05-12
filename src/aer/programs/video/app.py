@@ -7,7 +7,7 @@ class AERVideoApp(QuickApp):
     usage = '%prog --log <data.aer> --interval 0.05'
     
     def define_options(self, params):
-        params.add_required_string("log", help='source file')    
+        params.add_string("log", help='source file')
         params.add_float("interval", help='delta', default=0.03)
                             
     def define_jobs_context(self, context):
