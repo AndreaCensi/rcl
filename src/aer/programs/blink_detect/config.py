@@ -2,6 +2,7 @@ import numpy as np
 import os
 import yaml
 from contracts import contract
+from aer import logger
 
 AER_BLINK_CONF = 'aer_blink_conf.yaml'
 
@@ -38,9 +39,27 @@ class BlinkDetectConfig(object):
 
 def get_blink_config(log):
     """ Reads the file "aer_blink_conf.yaml" """
+
+    options = []
+
     dirname = os.path.dirname(log)
     confname = os.path.join(dirname, AER_BLINK_CONF)
-    conf = yaml.load(open(confname).read())
+    options.append(confname)
+
+    options.append(AER_BLINK_CONF)
+
+    for o in options:
+        if os.path.exists(o):
+            logger.info('Using configuration %r.' % o)
+            break
+        else:
+            logger.warning('Could not find %r.' % o)
+
+    else:
+        msg = 'No valid configuration found: %s' % options
+        raise ValueError(msg)
+
+    conf = yaml.load(open(o).read())
     if not isinstance(conf, dict):
         msg = 'Expected a dictionary in %r' % conf
         raise ValueError(msg)

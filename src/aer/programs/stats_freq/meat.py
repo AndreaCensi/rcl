@@ -1,7 +1,8 @@
-from . import logger, np
 from reprep import Report
 from aer.filters import aer_pipeline_transitions1_all
 from aer.stats import aer_histogram
+import numpy as np
+from aer import logger
 
 def aer_stats_freq_meat(log, pipeline):
     events = aer_pipeline_transitions1_all(log, pipeline)

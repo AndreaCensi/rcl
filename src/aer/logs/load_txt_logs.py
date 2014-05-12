@@ -1,6 +1,9 @@
-from . import aer_raw_event_dtype, np, logger
+from . import aer_raw_event_dtype
 from StringIO import StringIO
+from aer import logger
+import numpy as np
 
+__all__ = ['aer_raw_sequence']
 
 def aer_raw_sequence(line_stream):
     """ Yields a sequence of events from a stream.
