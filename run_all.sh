@@ -11,7 +11,7 @@ echo Running all experiments
 # files="data/nov26b/*aedat data/nov28/*aedat"
 files="data/dec6/*aedat"
 
-run="nice -n 10 aer_blink_detect --console"
+run="nice -n 10 aer_blink_detect --contracts --console"
 
 # files=data/nov26b/h50_a0_c.aedat
 

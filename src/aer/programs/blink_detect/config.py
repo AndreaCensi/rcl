@@ -7,7 +7,7 @@ from aer import logger
 AER_BLINK_CONF = 'aer_blink_conf.yaml'
 
 class BlinkLED(object):
-    @contract(frequency='float,>0', position='array[3]')
+    @contract(frequency='float|int,>0', position='list[3](number)|array[3]')
     def __init__(self, frequency, position):
         self.frequency = float(frequency)
         self.position = np.array(position, dtype='float')
