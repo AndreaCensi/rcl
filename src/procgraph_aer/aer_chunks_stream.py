@@ -1,8 +1,10 @@
+import os
+
+from aer.logs.chunks import aer_iterate_intervals
+from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster
 from procgraph import Block, BadConfig
 from procgraph.block_utils import IteratorGenerator
-import os
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster
-from aer.logs.chunks import aer_iterate_intervals
+
 
 class AERChunksStream(IteratorGenerator):
     ''' 
@@ -10,8 +12,9 @@ class AERChunksStream(IteratorGenerator):
     '''
     Block.alias('aer_chunk_stream')
     
-    Block.config('filename', 'File.')
+    Block.config('filename', 'AEDAT Filename.')
     Block.config('interval', 'Interval')
+
     Block.output('events', 'Event stream')
     
 
@@ -21,7 +24,7 @@ class AERChunksStream(IteratorGenerator):
         
         if not os.path.exists(filename):
             msg = 'Not existent file %r.' % filename
-            raise BadConfig(self, msg, 'filename')
+            raise BadConfig(block=self, error=msg, config='filename')
         
         raw_events = aer_raw_events_from_file_all_faster(filename)
         chunks = aer_iterate_intervals(raw_events, interval)

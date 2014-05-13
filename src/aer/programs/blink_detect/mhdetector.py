@@ -1,3 +1,8 @@
+import itertools
+from scipy.ndimage.filters import gaussian_filter
+
+from contracts import contract
+
 from aer.filters.pipelines import (aer_pipeline_transitions1,
     aer_pipeline_transitions1_all)
 from aer.logs.generic import aer_load_log_generic
@@ -8,12 +13,9 @@ from aer.programs.blink_detect.rcl_detect_meat import (centroid_estimate2,
 from aer.utils import md_argmax
 from aer_led_tracker.logio import AERTrackLogWriter
 from aer_led_tracker.tracks import create_track_observation
-from contracts import contract
-from scipy.ndimage.filters import gaussian_filter
-import itertools
 import numpy as np
- 
-    
+
+
 class MHDetectorLog(object):
     
     def __init__(self, log, pipeline, sigma, outdir, tracks_filename,

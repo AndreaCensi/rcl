@@ -1,18 +1,20 @@
-from . import aer_stats_events_meat
 from quickapp import QuickApp
-import sys
+from .meat import aer_stats_events_meat
+
+
+__all__ = ['aer_stats_events_main']
+
 
 class AERStatsEventsApp(QuickApp):
     
     def define_options(self, params):
-        params.add_string("log", help='source file', compulsory=True)    
+        params.add_string("log", help='source file')
        
-    def define_jobs(self):
+    def define_jobs_context(self, context):
         options = self.get_options()
-        report = self.comp(aer_stats_events_meat, options.log)        
-        self.add_report(report, 'rep1')
+        report = context.comp(aer_stats_events_meat, options.log)
+        context.add_report(report, 'rep1')
  
+aer_stats_events_main = AERStatsEventsApp.get_sys_main()
 
-def aer_stats_events_main():
-    sys.exit(AERStatsEventsApp().main())
     

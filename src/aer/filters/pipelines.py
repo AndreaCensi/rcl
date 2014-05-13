@@ -1,11 +1,14 @@
-from . import aer_raw_relative_timestamp, aer_raw_only_middle
-from ..logs import aer_raw_events_from_file_all
+import os
+
 from aer import logger
 from aer.filters.transitions2 import aer_sign_transitions
 from aer.types import aer_filtered_event_dtype
 from compmake.utils import safe_pickle_dump, safe_pickle_load
 import numpy as np
-import os
+
+from . import aer_raw_relative_timestamp, aer_raw_only_middle
+from ..logs import aer_raw_events_from_file_all
+
 
 def aer_pipeline_transitions1(raw_sequence, name):
     """ Iterates over transitions events """
@@ -39,11 +42,17 @@ def aer_pipeline_transitions1_all_slave(filename, name):
     n = len(raw_sequence)
     logger.info('Allocating %d size' % n)
     out = np.zeros(dtype=aer_filtered_event_dtype, shape=n)
+    nf = 0
     for i, f in enumerate(filtered):
         out[i] = f
-    logger.info('Read %d filtered events ' % i)
-    valid = out[:i]
+        nf += 1
+    logger.info('Read %d filtered events ' % nf)
+    if nf == 0:
+        raise ValueError('Not enough filtered events.')
+    valid = out[:nf]
     return valid
+
+
 
 def collect_all(sequence):
     logger.info('Reading all events...')

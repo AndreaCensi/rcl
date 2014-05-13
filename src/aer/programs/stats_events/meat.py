@@ -2,7 +2,9 @@ import numpy as np
 from aer.stats import aer_histogram
 from aer.utils import md_argmax
 from reprep import Report, scale
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all
+from aer.logs.load_aer_logs import aer_raw_events_from_file_all, \
+    aer_raw_events_from_file_all_faster
+from aer.stats.histo import aer_histogram_sign
 
 def get_for_one(events, coords): 
     for_one = np.logical_and(events['x'] == coords[0],
@@ -42,9 +44,16 @@ def report_for_one(r, events, coords):
     time = one['timestamp']
     time = time - time[0]
     
+
     with f.plot('history') as pylab:
-        plus = one['sign'] == 1
+
+        plus = one['sign'] == +1
         minus = one['sign'] == -1
+
+#         print len(one), np.sum(plus), np.sum(minus)
+
+        assert np.sum(plus) + np.sum(minus) == one.size
+
         ones = np.ones(one.size)
         
         pylab.plot(time[plus], 1 * ones[plus], 'rs')
@@ -54,12 +63,24 @@ def report_for_one(r, events, coords):
         delta = 0.01
         pylab.axis((t0, t0 + delta, -1.2, 1.2)) 
     
+    with f.plot('history2') as pylab:
+        pylab.plot(events['sign'], '.')
 
 def aer_stats_events_meat(log):
-#    events = collect_all(aer_load_log_generic(log))
-    events = aer_raw_events_from_file_all(log)
+    events = aer_raw_events_from_file_all_faster(log)
+    
+    P = np.sum(events['sign'] > 0)
+    N = np.sum(events['sign'] < 0)
+    print np.unique(events['sign'])
+    print('num positive %s neg %s' % (P, N))
+
     hist = aer_histogram(events)
     _, coords = md_argmax(hist)
+
+#     hist = aer_histogram(events[events['sign'] > 0])
+#     _, coords = md_argmax(hist)
+
+    print('choosing coordinate %s' % str(coords))
 
     r = Report('index')    
     with r.subsection('sub') as sub:

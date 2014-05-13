@@ -70,5 +70,6 @@ def get_blink_config(log):
         msg = 'Could not find entry %r in %r' % (basename, conf.keys())
         raise ValueError(msg)
     log_conf = conf[basename]
+    logger.info('Using log configuration %r' % log_conf)
     
     return BlinkDetectConfig(id_log=basename, log=log, **log_conf)
