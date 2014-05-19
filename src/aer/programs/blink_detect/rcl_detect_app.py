@@ -32,8 +32,11 @@ class AERBlinkDetect(QuickApp):
         options = self.get_options()
         outdir = context.get_output_dir()
 
-        for c, log in iterate_context_names(context, options.log):
-
+        for c, ilog in iterate_context_names(context, range(len(options.log))):
+            log = options.log[ilog]
+            if not os.path.exists(log):
+                msg = ('Cannot find log %r.' % log)
+                raise ValueError(msg)
             suffix = options.suffix
             tracks_filename = os.path.splitext(log)[0] + '.%s.tracks' % suffix
 
