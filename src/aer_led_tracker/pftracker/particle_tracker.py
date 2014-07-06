@@ -1,5 +1,9 @@
+from contracts import contract
+
+import numpy as np
+
 from . import (particle_dist, particle_is_compatible, particle_merge,
-    particle_evolve_up_to, contract, np, aer_particle)
+    particle_evolve_up_to, aer_particle)
 
 
 class ParticleTracker():
