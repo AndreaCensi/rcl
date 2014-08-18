@@ -1,10 +1,10 @@
 from aer.logs import aedat_info_cached
+from aer.logs.chunks import check_good_chunks, get_chunks_linear
 from contracts import contract
+from numpy import allclose
 from numpy.testing.utils import assert_allclose
 from rawlogs import RawSignal
 import numpy as np
-from aer.logs.chunks import check_good_chunks, get_chunks_linear
-from numpy.ma.core import allclose
 
 
 __all__ = ['AERSignal']
@@ -46,8 +46,7 @@ class AERSignal(RawSignal):
             
             for i in xrange(0, self.data.size, 100):
                 d1 = data1[i]
-                d2 = self.data[i]
-                print i, d1, d2
+                d2 = self.data[i] 
                 assert_allclose(d1, d2)
                 # print d1
                 # print d2
