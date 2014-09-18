@@ -1,0 +1,18 @@
+--- model aer_encode
+""" 
+    Encodes with a fixed 29.97 frame rate (this is what you need to
+    do if you want to do video editing; otherwise things go out of sync).
+
+    TODO: Move this in procgraph_mplayer
+"""
+config file
+config fps = 29.97
+config md = {'boot_encode': 'metadata not given'}
+
+|input name='rgb'| ->  rgb
+
+rgb -> |fix_frame_rate fps=$fps| -> rgb_synced
+
+rgb_synced ->|mencoder md=$md file=$file timestamps=0|
+
+
