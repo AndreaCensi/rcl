@@ -30,9 +30,9 @@ rgb_all, rgb_pos, rgb_neg  -> |sync| -> |grid cols=3| -> rgb
 
 # rgb -> |info|
 
-rgb -> |mencoder file="${filename}-${interval}.mp4"|
+rgb -> |aer_encode file="${filename}-${interval}.mp4"|
 
 
 
-""" Temporary display """
-rgb -> |imwrite file="aer_events_show.png"|
+#""" Temporary display """
+# rgb -> |imwrite file="aer_events_show.png"|
