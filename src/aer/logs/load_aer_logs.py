@@ -3,6 +3,7 @@ from io import BufferedReader
 import io
 import numpy as np
 import sys
+import csv
 
 
 def aer_raw_events_from_file(filename):
@@ -58,6 +59,42 @@ def aer_raw_events_from_file_all(filename, limit=None):
     
     return e
 
+def aer_raw_events_from_csv(filename):
+    timestamps = []
+    x = []
+    y = []
+    sign = []
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in reader:
+            if len(row) < 4:
+                print('Invalid row: %r' % row)
+            else:
+                rt,rx,ry,rs = row[0:4]
+                try:
+                    timestamps.append(float(rt)*0.000001)
+                    rx = int(float(rx))
+                    ry = int(float(ry))
+                    x.append(rx)
+                    y.append(ry)
+                    rs = int(rs)
+                    if rs > 0:
+                        rs = 1
+                    else:
+                        rs = -1
+                    sign.append(rs)
+                except Exception as ex:
+                    msg = 'Invalid %r: %r ' % (row, ex)
+                    raise ValueError(msg)
+    n = len(timestamps)
+    print('read %r events from file %r. '% (n, filename))
+    e = np.zeros(shape=n, dtype=aer_raw_event_dtype)
+    e['timestamp'] = timestamps
+    e['sign'] = sign
+    e['x'] =x
+    e['y'] =y
+            
+    return e
 
 def aer_raw_events_from_file_all_faster(filename, limit=None):
     """ Returns an array of raw events """
@@ -119,9 +156,10 @@ def read_aer_header(filename):
     f = io.open(filename, 'r+b') 
     f = BufferedReader(f)
     comments = read_comments(f)
-    if not 'AER-DAT2.0' in comments[0]:
-        msg = 'Can only read 2.0 files'
-        raise ValueError(msg)
+    if comments:
+        if not 'AER-DAT2.0' in comments[0]:
+            msg = 'Can only read 2.0 files'
+            raise ValueError(msg)
     return f, comments
     
 def read_block(f):

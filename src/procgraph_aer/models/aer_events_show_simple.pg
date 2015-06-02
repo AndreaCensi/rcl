@@ -7,7 +7,8 @@ config width = 512
 
 import procgraph_aer
 
-|aer_chunk_stream interval=$interval filename=$filename| -> |aer_transpose| -> events
+|aer_chunk_stream interval=$interval filename=$filename| -> |aer_transpose| -> events 
+#-> |info| 
 
 events -> |aer_events_hist_sign| -> hist_sign
 

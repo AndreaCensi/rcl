@@ -4,6 +4,7 @@ from reprep import Report
 import sys
 from aer.filters.pipelines import collect_all
 from aer.stats import aer_histogram
+from quickapp.quick_app_base import QuickAppBase
 
 def aer_simple_stats(log):
     events = collect_all(aer_load_log_generic(log))
@@ -28,14 +29,13 @@ def aer_simple_stats_report(stats):
 class AERSimpleStats(QuickApp):
     
     def define_options(self, params):
-        params.add_string("log", help='AER log file', compulsory=True)    
+        params.add_string("log", help='AER log file')    
                             
-    def define_jobs(self):
+    def define_jobs_context(self, context):
         options = self.get_options()
-        stats = self.comp(aer_simple_stats, log=options.log)
-        report = self.comp(aer_simple_stats_report, stats)
-        self.add_report(report, 'rep1')
+        stats = context.comp(aer_simple_stats, log=options.log)
+        report = context.comp(aer_simple_stats_report, stats)
+        context.add_report(report, 'rep1')
  
-def aer_simple_stats_main():
-    sys.exit(AERSimpleStats().main())
+aer_simple_stats_main = AERSimpleStats.get_sys_main()
     

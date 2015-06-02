@@ -1,7 +1,8 @@
 from procgraph import Block, BadConfig
 from procgraph.block_utils import IteratorGenerator
 import os
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster
+from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster,\
+    aer_raw_events_from_csv
 from aer.logs.chunks import aer_iterate_intervals
 
 class AERChunksStream(IteratorGenerator):
@@ -23,7 +24,13 @@ class AERChunksStream(IteratorGenerator):
             msg = 'Not existent file %r.' % filename
             raise BadConfig(self, msg, 'filename')
         
-        raw_events = aer_raw_events_from_file_all_faster(filename)
+        if 'events.txt' in filename:
+            raw_events = aer_raw_events_from_csv(filename)
+        else:
+            raw_events = aer_raw_events_from_file_all_faster(filename)
+#         for e in raw_events:
+#             self.info('timestamp %r es %s %s' % (e['timestamp'], e['x'], e['y']))
+            
         chunks = aer_iterate_intervals(raw_events, interval)
         for timestamp, es in chunks:
             yield 0, timestamp, es

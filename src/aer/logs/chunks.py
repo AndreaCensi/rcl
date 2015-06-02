@@ -14,7 +14,8 @@ def aer_iterate_intervals(events, interval):
     T0 = timestamps[0]
     T1 = timestamps[-1]
     chunks = list(get_chunks_linear(timestamps, T0, T1, interval))
-    check_good_chunks(timestamps, T0, T1, interval, chunks)
+    # Actually now we had get_chunks_linear ignore empty intervals
+    # check_good_chunks(timestamps, T0, T1, interval, chunks)
     for a, b in chunks:
         timestamp = timestamps[a]
 #         if a == b:  # no events in this chunk
@@ -44,12 +45,18 @@ def get_chunks_linear(timestamps, T0, T1, interval):
     assert np.all(T0 <= times)
     assert np.all(times <= T1)
     
+#     print('timestamps: %s' % str(timestamps))
+#     print('times: %s' % str(times))
     chunks = np.searchsorted(timestamps, times)
+#     print('search sorted: %s' % str(chunks))
     
     for i in range(chunks.size - 1):
+#         print(i, chunks[i], chunks[i+1])
         a = chunks[i]
         b = chunks[i + 1] - 1
         
+        if a >= b:
+            continue
         # this means that there are no events in this chunk
 #         if a == b:
 #             break
