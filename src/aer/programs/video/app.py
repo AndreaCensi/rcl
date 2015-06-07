@@ -23,8 +23,9 @@ class AERVideoApp(QuickApp):
         logs = options.log
         intervals = options.interval
         
-        combinations = iterate_context_names_triplet(context, models, logs, intervals)
-        for c, model, log, interval in combinations:
+        combinations = iterate_context_names_triplet(context, models, range(len(logs)), intervals)
+        for c, model, ilog, interval in combinations:
+            log = logs[ilog]
             c.comp(aer_video_meat, log=log, interval=interval, model=model)        
 
 aer_video_main = AERVideoApp.get_sys_main()

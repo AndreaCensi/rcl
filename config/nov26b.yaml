@@ -1,0 +1,151 @@
+geometry: &geometry_nov26
+    leds:
+    - frequency: 900
+      position: [0, 0, 0]
+    - frequency: 1250
+      position: [0, 0, 0]
+    - frequency: 1600
+      position: [0, 0, 0]
+    - frequency: 1950
+      position: [0, 0, 0]
+
+floor_led0:
+    geometry: *geometry_nov26
+    desc:
+
+floor_led1:
+    geometry: *geometry_nov26
+    desc:
+    
+floor_led2:
+    geometry: *geometry_nov26
+    desc:
+    
+floor_led4:
+    geometry: *geometry_nov26
+    desc:
+    
+h100_a0_a:
+    geometry: *geometry_nov26
+    desc:
+
+h100_a0_b:
+    geometry: *geometry_nov26
+    desc:
+
+h100_a0_c:
+    geometry: *geometry_nov26
+    desc:
+
+h100_a0_d:
+    geometry: *geometry_nov26
+    desc:
+
+h160_a0_a:
+    geometry: *geometry_nov26
+    desc:
+
+h160_a0_b:
+    geometry: *geometry_nov26
+    desc:
+
+h160_a0_c:
+    geometry: *geometry_nov26
+    desc:
+
+h160_a0_d:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a0_a:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a0_b:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a0_c:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a0_d:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a45_a:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a45_b:
+    geometry: *geometry_nov26
+    desc:
+
+h50_a45_c:
+    geometry: *geometry_nov26
+    desc:
+h50_a45_d:
+    geometry: *geometry_nov26
+    desc:
+h50_a75_a:
+    geometry: *geometry_nov26
+    desc:
+h50_a75_b:
+    geometry: *geometry_nov26
+    desc:
+h50_a75_c:
+    geometry: *geometry_nov26
+    desc:
+h50_a75_d:
+    geometry: *geometry_nov26
+    desc:
+inandout_1:
+    geometry: *geometry_nov26
+    desc:
+inandout_2:
+    geometry: *geometry_nov26
+    desc:
+joint_1:
+    geometry: *geometry_nov26
+    desc:
+joint_2:
+    geometry: *geometry_nov26
+    desc:
+joint_3:
+    geometry: *geometry_nov26
+    desc:
+joint_4:
+    geometry: *geometry_nov26
+    desc:
+panorama_a:
+    geometry: *geometry_nov26
+    desc:
+panorama_b:
+    geometry: *geometry_nov26
+    desc:
+panorama_c:
+    geometry: *geometry_nov26
+    desc:
+
+panorama_d: 
+    geometry: *geometry_nov26
+    desc:
+
+panorama_d: 
+    geometry: *geometry_nov26
+
+panorama_d_w_monitor: 
+    geometry: *geometry_nov26
+    desc:
+
+upanddown_1: 
+    geometry: *geometry_nov26
+    desc:
+
+upanddown_2: 
+    geometry: *geometry_nov26
+    desc:
+
+upanddown_3: 
+    geometry: *geometry_nov26
+    desc:

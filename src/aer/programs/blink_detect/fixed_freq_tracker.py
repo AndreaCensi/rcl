@@ -37,9 +37,15 @@ class TrackerFixedFreq():
             self.accum = np.zeros(self.shape, 'float')
 
         f = e['frequency']
+
+#         print('dt %10.4f frequency: %10.2f' % (t - self.start_frame, f))
+
+#         print('factors: %s' % self.factors)
         found = False
+#         maxw = 0
         for alpha, freq, sigma in self.factors:
             df = np.abs(f - freq)
+
             if df / sigma > 6:
                 continue
             else:
@@ -47,10 +53,14 @@ class TrackerFixedFreq():
                     # found one event good
                     found = True
             w = alpha * np.exp(-(df / sigma) ** 2)
-        
+
             self.accum[e['x'], e['y']] += w
 
-        if found and t > self.start_frame + self.interval:
+#         print(t - (self.start_frame + self.interval), found)
+        time_to_do_it = t > self.start_frame + self.interval
+        reset = found and time_to_do_it
+#         reset = time_to_do_it
+        if reset:
             self.start_frame = t
             self.prev_accum = self.accum
             self.accum = np.zeros(self.shape, 'float')

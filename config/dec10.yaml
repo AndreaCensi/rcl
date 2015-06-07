@@ -1,0 +1,53 @@
+geometry: &geometry_nov28
+    leds:
+    - frequency: 900
+      position: [0, 0, 0]
+    - frequency: 1070
+      position: [0, 0, 0]
+    - frequency: 1240
+      position: [0, 0, 0]
+    - frequency: 1410
+      position: [0, 0, 0]
+
+l1:
+    geometry: *geometry_nov28
+    desc:
+
+l2:
+    geometry: *geometry_nov28
+    desc:
+
+l3:
+    geometry: *geometry_nov28
+    desc:
+
+l4:
+    geometry: *geometry_nov28
+    desc:
+
+l5:
+    geometry: *geometry_nov28
+    desc:
+
+l6:
+    geometry: *geometry_nov28
+    desc:
+l7:
+    geometry: *geometry_nov28
+    desc:
+l8:
+    geometry: *geometry_nov28
+    desc:
+l9:
+    geometry: *geometry_nov28
+    desc:
+l10:
+    geometry: *geometry_nov28
+    desc:
+l11:
+    geometry: *geometry_nov28
+    desc:
+l12:
+    geometry: *geometry_nov28
+    desc:
+

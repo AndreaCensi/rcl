@@ -2,11 +2,12 @@ import numpy as np
 import os
 import yaml
 from contracts import contract
+from aer import logger
 
 AER_BLINK_CONF = 'aer_blink_conf.yaml'
 
 class BlinkLED(object):
-    @contract(frequency='float,>0', position='array[3]')
+    @contract(frequency='float|int,>0', position='list[3](number)|array[3]')
     def __init__(self, frequency, position):
         self.frequency = float(frequency)
         self.position = np.array(position, dtype='float')
@@ -38,9 +39,27 @@ class BlinkDetectConfig(object):
 
 def get_blink_config(log):
     """ Reads the file "aer_blink_conf.yaml" """
+
+    options = []
+
     dirname = os.path.dirname(log)
     confname = os.path.join(dirname, AER_BLINK_CONF)
-    conf = yaml.load(open(confname).read())
+    options.append(confname)
+
+    options.append(AER_BLINK_CONF)
+
+    for o in options:
+        if os.path.exists(o):
+            logger.info('Using configuration %r.' % o)
+            break
+        else:
+            logger.warning('Could not find %r.' % o)
+
+    else:
+        msg = 'No valid configuration found: %s' % options
+        raise ValueError(msg)
+
+    conf = yaml.load(open(o).read())
     if not isinstance(conf, dict):
         msg = 'Expected a dictionary in %r' % conf
         raise ValueError(msg)
@@ -51,5 +70,6 @@ def get_blink_config(log):
         msg = 'Could not find entry %r in %r' % (basename, conf.keys())
         raise ValueError(msg)
     log_conf = conf[basename]
+    logger.info('Using log configuration %r' % log_conf)
     
     return BlinkDetectConfig(id_log=basename, log=log, **log_conf)

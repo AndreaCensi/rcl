@@ -1,19 +1,23 @@
-from . import aer_stats_freq_meat
+from aer.programs.stats_freq.meat import aer_stats_freq_meat
+
 from quickapp import QuickApp
-import sys
+from quickapp.app_utils.subcontexts import iterate_context_names
+
 
 class AERStatsFreqApp(QuickApp):
     
     def define_options(self, params):
-        params.add_string("log", help='source file', compulsory=True)    
-        params.add_string("pipeline", help='p2n,n2p,both', default='both')    
+        params.add_string("log", help='source file')
                             
-    def define_jobs(self):
+    def define_jobs_context(self, context):
         options = self.get_options()
-        report = self.comp(aer_stats_freq_meat, options.log, options.pipeline)        
-        self.add_report(report, 'rep1')
+        pipelines = ['p2n', 'n2p', 'both']
+        for c, pipeline in iterate_context_names(context, pipelines):
+            c.add_extra_report_keys(pipeline=pipeline)
+
+            r = c.comp(aer_stats_freq_meat, options.log, pipeline)
+            c.add_report(r, 'rep1')
  
 
-def aer_stats_freq_main():
-    sys.exit(AERStatsFreqApp().main())
-    
+aer_stats_freq_main = AERStatsFreqApp.get_sys_main()
+
