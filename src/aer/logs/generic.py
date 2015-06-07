@@ -1,5 +1,7 @@
 from . import aer_raw_events_from_file, aer_raw_sequence
 
+__all__ = ['aer_load_log_generic']
+
 
 def aer_load_log_generic(filename):
     if '.aer.txt' in filename:

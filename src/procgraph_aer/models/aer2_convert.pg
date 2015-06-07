@@ -1,0 +1,24 @@
+#!/usr/bin/env pg
+--- model aer2_convert
+
+""" Reads AER2 text stream and converts to HDF """
+
+config filename
+config out = "${filename}.aer2.h5"
+
+import procgraph_aer
+import procgraph_rawlogs
+import procgraph_hdf
+
+|log:read_rawlog| -> |out:hdfwrite| 
+  
+  #log.frame 
+  
+  log.rawlog = ['aer.logs.AER2TXTLog', {filename: $filename}]
+  # log.events -> |info| 
+ # log.imu6 -> |info|
+  log.frame -> |info|
+  # log.pixels -> |info|
+  
+  out.file = $out 
+ 

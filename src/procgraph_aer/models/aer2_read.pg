@@ -1,0 +1,16 @@
+#!/usr/bin/env pg
+--- model aer2_read
+
+""" Read the data in an AER2 text stream """
+
+config filename
+
+import procgraph_aer
+import procgraph_rawlogs
+
+|log:read_rawlog rawlog=['aer.logs.AER2TXTLog', {filename: $filename}]| 
+  
+  log.events -> |info| 
+  log.imu6 -> |info|
+  log.frame -> |info|
+ 

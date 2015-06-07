@@ -1,12 +1,12 @@
-import os
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster,\
-    aer_raw_events_from_csv
-
 from aer.logs.chunks import aer_iterate_intervals
-from aer.logs.load_aer_logs import aer_raw_events_from_file_all_faster
-from procgraph import Block, BadConfig
+from aer.logs.load_aer_logs import (aer_raw_events_from_csv,
+    aer_raw_events_from_file_all_faster)
+from procgraph import BadConfig, Block
 from procgraph.block_utils import IteratorGenerator
+import os
 
+
+__all__ = ['AERChunksStream']
 
 class AERChunksStream(IteratorGenerator):
     ''' 

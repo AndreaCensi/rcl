@@ -107,8 +107,9 @@ def aer_raw_events_from_file_all_faster(filename, limit=None):
     if len(rest) % m != 0:
         n = int(np.floor(len(rest) / m))
         extra = len(rest) - n * m 
-        logger.error('The log is truncated -- reading only %d entries (%d extra bytes)' % (n, extra))
-        rest=rest[:n*m]
+        msg = 'The log is truncated -- reading only %d entries (%d extra bytes)' % (n, extra)
+        logger.error(msg)
+        rest = rest[:n * m]
     data = np.fromstring(rest, dtype=np.uint32).newbyteorder('>')
     nevents = data.size / 2
     
@@ -233,7 +234,7 @@ def read_comment_line(f):
 def main():
     events = aer_load_from_file(sys.argv[1])
     for ts, x, y, s in events:  # @UnusedVariables
-        print '%.10f %5d %5d %2d' % (ts, x, y, s) 
+        print('%.10f %5d %5d %2d' % (ts, x, y, s))
         pass
 
 

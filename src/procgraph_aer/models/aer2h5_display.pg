@@ -1,0 +1,75 @@
+#!/usr/bin/env pg
+--- model aer2h5_display
+
+""" Read the data in an AER2 H5 log and display it."""
+
+config filename
+config out = "${filename}-display1.mp4"
+
+import procgraph_rawlogs
+
+|log:read_rawlog rawlog=['rawlogs_hdflog.HDFRawLog', {filename: $filename}]| 
+
+log.events[events], log.frame[frame], log.imu6[imu6] -> |display:aer2_display_core| -> rgb 
+
+rgb -> |mencoder file=$out|
+
+
+
+--- model aer2_display_core
+
+input events
+input frame
+input imu6
+output rgb
+
+config interval = 0.01 """ Interval for event packets. """
+
+
+import procgraph_aer
+ 
+|input name=frame| -> |sub f=pixels| -> |astype dtype=float| -> |scale| -> |resize width=960 height=720| -> rgb_frame
+
+
+|input name=events| -> events -> |info|
+
+events -> |time_slice interval=$interval| -> |list2array| -> last_events
+
+last_events -> |aer_events_hist_fancy_2| -> hist_sign
+
+#last_events -> |aer_filter_pos| -> |aer_events_hist| -> hist_pos
+#last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
+#last_events -> |aer_events_hist_sign| -> hist_sign
+
+hist_sign -> |posneg| -> |resize width=960 height=720| -> rgb_events
+
+
+#log.imu6 -> |sub f=a| -> |astype dtype=float| -> |scale| -> rgb
+config i = 2
+config w = 960
+config h = 100
+
+|input name=imu6| -> |fps_data_limit fps=100| -> imu -> |info|
+
+imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg0:plot width=$w title="gyro 0"| -->  rgb_g0
+imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg1:plot width=$w title="gyro 1"| -->  rgb_g1
+imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg2:plot width=$w title="gyro 2"| -->  rgb_g2
+imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa0:plot width=$w title="accel 0"| -->  rgb_a0
+imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa1:plot width=$w title="accel 1"| -->  rgb_a1
+imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa2:plot width=$w title="accel 2"| -->  rgb_a2
+
+rgb_g0,rgb_g1,rgb_g2,rgb_a0,rgb_a1,rgb_a2 -> |sync| -> |grid cols=1| -> rgb_imu
+
+    
+    # plot_cmp.height=$plots_height 
+    # plot_cmp.format='-' 
+    # p1.title="g0" 
+    # plot_cmp.y_min=0 
+    # plot_cmp.y_max=1 
+    # plot_cmp.fancy_styles = [noyticks, turn_off_right, turn_off_top, spines_outward]
+
+rgb_events, rgb_frame -> |sync| -> |grid cols=1| -> rgb_left
+
+rgb_left, rgb_imu -> |sync| -> |grid cols=2| -> |output name=rgb|
+
+ 
