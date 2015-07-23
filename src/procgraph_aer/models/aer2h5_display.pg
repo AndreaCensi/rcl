@@ -6,13 +6,21 @@
 config filename
 config out = "${filename}-display1.mp4"
 
+config t0 = 0
+config t1 = 1000
+
 import procgraph_rawlogs
 
-|log:read_rawlog rawlog=['rawlogs_hdflog.HDFRawLog', {filename: $filename}]| 
+|log:read_rawlog| 
+
+log.rawlog = ['rawlogs.library.LogPart', {relative: True, t0: $t0, t1: $t1, rawlog: ['rawlogs_hdflog.HDFRawLog', {filename: $filename}]}]
 
 log.events[events], log.frame[frame], log.imu6[imu6] -> |display:aer2_display_core| -> rgb 
 
-rgb -> |mencoder file=$out|
+rgb -> |info|
+rgb -> |t:text| -> |mencoder file=$out fps=29.97 timestamps=0|
+
+t.texts = [{string: "{frame}/{timestamp}/{time}", valign: bottom, halign: left, size: 30, color: gray, bg: black, font: 'Candara', position: [-5, 5]} ]
 
 
 
@@ -31,7 +39,7 @@ import procgraph_aer
 |input name=frame| -> |sub f=pixels| -> |astype dtype=float| -> |scale| -> |resize width=960 height=720| -> rgb_frame
 
 
-|input name=events| -> events -> |info|
+|input name=events| -> events
 
 events -> |time_slice interval=$interval| -> |list2array| -> last_events
 
@@ -41,7 +49,7 @@ last_events -> |aer_events_hist_fancy_2| -> hist_sign
 #last_events -> |aer_filter_neg| -> |aer_events_hist| -> hist_neg
 #last_events -> |aer_events_hist_sign| -> hist_sign
 
-hist_sign -> |posneg| -> |resize width=960 height=720| -> rgb_events
+hist_sign -> |posneg| -> |resize width=960 height=720| -> rgb_events -> |info|
 
 
 #log.imu6 -> |sub f=a| -> |astype dtype=float| -> |scale| -> rgb
@@ -49,14 +57,15 @@ config i = 2
 config w = 960
 config h = 100
 
-|input name=imu6| -> |fps_data_limit fps=100| -> imu -> |info|
+|input name=imu6| -> |fps_data_limit fps=100| -> imu 
+# -> |info|
 
 imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg0:plot width=$w title="gyro 0"| -->  rgb_g0
-imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg1:plot width=$w title="gyro 1"| -->  rgb_g1
-imu -> |sub f=gyro| -> |sub f=0| --> |historyt interval=$i| -> |pg2:plot width=$w title="gyro 2"| -->  rgb_g2
+imu -> |sub f=gyro| -> |sub f=1| --> |historyt interval=$i| -> |pg1:plot width=$w title="gyro 1"| -->  rgb_g1
+imu -> |sub f=gyro| -> |sub f=2| --> |historyt interval=$i| -> |pg2:plot width=$w title="gyro 2"| -->  rgb_g2
 imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa0:plot width=$w title="accel 0"| -->  rgb_a0
-imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa1:plot width=$w title="accel 1"| -->  rgb_a1
-imu -> |sub f=accel| -> |sub f=0| --> |historyt interval=$i| -> |pa2:plot width=$w title="accel 2"| -->  rgb_a2
+imu -> |sub f=accel| -> |sub f=1| --> |historyt interval=$i| -> |pa1:plot width=$w title="accel 1"| -->  rgb_a1
+imu -> |sub f=accel| -> |sub f=2| --> |historyt interval=$i| -> |pa2:plot width=$w title="accel 2"| -->  rgb_a2
 
 rgb_g0,rgb_g1,rgb_g2,rgb_a0,rgb_a1,rgb_a2 -> |sync| -> |grid cols=1| -> rgb_imu
 
@@ -68,8 +77,14 @@ rgb_g0,rgb_g1,rgb_g2,rgb_a0,rgb_a1,rgb_a2 -> |sync| -> |grid cols=1| -> rgb_imu
     # plot_cmp.y_max=1 
     # plot_cmp.fancy_styles = [noyticks, turn_off_right, turn_off_top, spines_outward]
 
-rgb_events, rgb_frame -> |sync| -> |grid cols=1| -> rgb_left
+rgb_events, rgb_frame  -> |grid cols=1| -> rgb_left 
 
-rgb_left, rgb_imu -> |sync| -> |grid cols=2| -> |output name=rgb|
+rgb_left, rgb_imu  -> |grid cols=2| -> rgb
+
+rgb -> |info|
+
+rgb -> |output name=rgb|
+
+
 
  
